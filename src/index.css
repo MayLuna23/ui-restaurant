@@ -1,1 +1,50 @@
 @tailwind utilities;
+
+/* 🎨 Variables globales de color */
+:root {
+  --color-peach-light: #fce3cc;
+  --color-peach: #f8b27e;
+  --color-orange-dark: #c16135;
+  --color-orange-light: #e48e55;
+}
+
+button {
+  color: white
+}
+
+.primary-button {
+  background-color: var(--color-orange-dark);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.secondary-button {
+  background-color: var(--color-peach-light);
+  color: var(--color-orange-dark);
+  border: 1px solid var(--color-orange-dark);
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* 🟠 Fondo degradado personalizado */
+.bg-orange-gradient {
+  background: linear-gradient(to bottom, var(--color-peach-light), var(--color-peach));
+}
+.bg-darkorange {
+  background: linear-gradient(var(--color-orange-dark));
+}
+
+.color-orange-dark {
+  color: var(--color-orange-dark);
+}
+
+.bttn-gradient {
+  background: linear-gradient(to right, var(--color-orange-dark), var(--color-orange-light));
+}
+/* 🔘 Botón degradado */
+.background-orange-dark {
+}

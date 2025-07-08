@@ -1,12 +1,6 @@
-import {
-  Form,
-  Input,
-  Button,
-  Typography,
-  message,
-  Card,
-} from 'antd';
-import axios from 'axios';
+import { Form, Input, Typography, message, Card } from "antd";
+import CustomButton from "@/components/CustomButton";
+import axios from "axios";
 
 const { Title } = Typography;
 
@@ -15,60 +9,73 @@ const LoginPage = () => {
 
   const onFinish = async (values: any) => {
     try {
-      const res = await axios.post('http://localhost:3000/api/auth/login', values);
+      const res = await axios.post(
+        "http://localhost:3000/api/auth/login",
+        values
+      );
       const token = res.data?.token;
 
       if (token) {
-        localStorage.setItem('token', token);
-        message.success('Inicio de sesión exitoso 🎉');
-        // Aquí puedes redirigir al dashboard o la home
-        // Por ejemplo: window.location.href = '/dashboard';
+        localStorage.setItem("token", token);
+        message.success("Inicio de sesión exitoso 🎉");
+        // window.location.href = "/dashboard";
       } else {
-        message.error('Respuesta inválida del servidor');
+        message.error("Respuesta inválida del servidor");
       }
     } catch (err: any) {
-      const msg =
-        err?.response?.data?.message || 'Error al iniciar sesión';
+      const msg = err?.response?.data?.message || "Error al iniciar sesión";
       message.error(msg);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md shadow-lg">
-        <Title level={3}>Iniciar Sesión 🔐</Title>
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item
-            label="Correo"
-            name="email"
-            rules={[
-              { required: true, message: 'El email es obligatorio' },
-              { type: 'email', message: 'Formato de email inválido' },
-            ]}
-          >
-            <Input placeholder="Ej: juan@email.com" />
-          </Form.Item>
+    <div className="bg-orange-gradient min-h-screen flex flex-col items-center">
+      {/* Título arriba */}
+      <div className="py-8">
+        <h1 className="text-3xl font-bold text-orangeDark">Ocean Restaurant</h1>
+      </div>
 
-          <Form.Item
-            label="Contraseña"
-            name="password"
-            rules={[{ required: true, message: 'La contraseña es obligatoria' }]}
+      {/* Formulario centrado en el espacio restante */}
+      <div className="flex-1 flex items-center justify-center w-full px-4">
+        <Card className="w-full max-w-md border-0 rounded-xl bg-transparent">
+          <Title
+            style={{ color: "var(--color-orange-dark)" }}
+            level={2}
+            className="text-center color-orange-dark"
           >
-            <Input.Password placeholder="Contraseña" />
-          </Form.Item>
+            Log In
+          </Title>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={onFinish}
+            autoComplete="off"
+          >
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: "The email is required" },
+                { type: "email", message: "The email format is invalid" },
+              ]}
+            >
+              <Input placeholder="example@email.com" />
+            </Form.Item>
 
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Iniciar Sesión
-            </Button>
-          </Form.Item>
-        </Form>
-      </Card>
+            <Form.Item
+              name="password"
+              rules={[
+                { required: true, message: "La contraseña es obligatoria" },
+              ]}
+            >
+              <Input.Password placeholder="Password" />
+            </Form.Item>
+
+            <Form.Item className="text-center">
+              <CustomButton isPrimary={true} label="Log In"  />
+            </Form.Item>
+          </Form>
+        </Card>
+      </div>
     </div>
   );
 };

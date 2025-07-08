@@ -33,14 +33,14 @@ const ProductList = () => {
       rowKey="productId"
       dataSource={products}
       loading={loading}
-      pagination={{ pageSize: 5 }}
+      // pagination={{ pageSize: 5 }}
       columns={[
         {
-          title: 'Nombre',
+          title: 'Name',
           dataIndex: 'name',
         },
         {
-          title: 'Precio',
+          title: 'Price',
           dataIndex: 'price',
           render: (value: number) =>
             `$ ${value.toLocaleString('es-CO', {

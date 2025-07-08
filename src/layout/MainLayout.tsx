@@ -1,37 +1,61 @@
-import { Layout, Menu } from 'antd';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import React, { useState } from "react";
 import {
-  ShoppingOutlined,
   FileTextOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   PieChartOutlined,
-} from '@ant-design/icons';
+  ShoppingOutlined,
+  UploadOutlined,
+  UserOutlined,
+  VideoCameraOutlined,
+} from "@ant-design/icons";
+import { Button, Layout, Menu, theme } from "antd";
+import { Link, Outlet } from "react-router-dom";
 
 const { Header, Sider, Content } = Layout;
 
-const MainLayout = () => {
-  const location = useLocation();
+const MainLayout: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
 
   return (
-    <Layout style={{  minHeight: '100vh' }}>
-      <Sider style={{ background: '#491180'}}>
-        <div className="text-white text-center py-6 text-lg font-bold">
-          🧾 OceanApp
+    <Layout style={{ height: "100vh" }}>
+      <Sider trigger={null} collapsible collapsed={collapsed}>
+        <div
+          className="demo-logo-vertical"
+          style={{
+            height: 64,
+            margin: 16,
+            background: "rgba(255, 255, 255, 0.3)",
+            borderRadius: 6,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#fff",
+            fontWeight: "bold",
+            fontSize: 18,
+            transition: "all 0.3s ease",
+          }}
+        >
+          {collapsed ? "🍔" : "Ocean Restaurant"}
         </div>
+
         <Menu
-        style={{ background: '#491180'}}
           theme="dark"
           mode="inline"
-          selectedKeys={[location.pathname]}
+          defaultSelectedKeys={["1"]}
           items={[
             {
               key: '/productos',
               icon: <ShoppingOutlined />,
-              label: <Link to="/productos">Productos</Link>,
+              label: <Link to="/products">Productos</Link>,
             },
             {
               key: '/ordenes',
               icon: <FileTextOutlined />,
-              label: <Link to="/ordenes">Órdenes</Link>,
+              label: <Link to="/orders">Create Order</Link>,
             },
             {
               key: '/dashboard',
@@ -42,13 +66,28 @@ const MainLayout = () => {
         />
       </Sider>
       <Layout>
-        <Header style={{ background: '#F22FEF', padding: '16px 16px' }}>
-          <h1 className="text-xl font-semibold">Gestión de Restaurante</h1>
+        <Header style={{ padding: 0, background: colorBgContainer }}>
+          <Button
+            type="text"
+            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+            onClick={() => setCollapsed(!collapsed)}
+            style={{
+              fontSize: "16px",
+              width: 64,
+              height: 64,
+            }}
+          />
         </Header>
-        <Content style={{ margin: '16px' }}>
-          <div className="bg-white p-6 rounded-lg shadow-sm min-h-[80vh]">
-            <Outlet />
-          </div>
+        <Content
+          style={{
+            margin: "24px 16px",
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          <Outlet />
         </Content>
       </Layout>
     </Layout>

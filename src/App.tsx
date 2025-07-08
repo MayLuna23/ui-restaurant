@@ -1,5 +1,5 @@
 import "./App.css";
-
+import "./index.css"
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout  from './layout/MainLayout';
 import ProductsPage from './pages/ProductsPage';
@@ -19,12 +19,12 @@ function App() {
         {/* Rutas protegidas */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<Navigate to="/productos" />} />
-          <Route path="/productos" element={<ProductsPage />} />
-          <Route path="/ordenes" element={<OrdersPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/orders" element={<OrdersPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
         </Route>
         {/* Redirección por defecto */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* <Route path="*" element={<Navigate to="/login" replace />} /> */}
       </Routes>
     </BrowserRouter>
   );
