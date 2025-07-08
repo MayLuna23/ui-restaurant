@@ -1,21 +1,29 @@
+// src/components/ProductForm.tsx
+
 import { Form, Input, InputNumber, Button, message } from "antd";
 import { useState } from "react";
-import axios from "axios";
+import { createProduct } from "@/api/products";
 
 const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [loading, setLoading] = useState(false);
-
   const [form] = Form.useForm();
 
   const onFinish = async (values: { name: string; price: number }) => {
     setLoading(true);
     try {
-      await axios.post("http://localhost:3000/api/products", values);
-      message.success("Producto creado con éxito ✅");
-      form.resetFields();
-      onSuccess?.();
+      const jwt = localStorage.getItem("jwt") || "";
+      const response = await createProduct(values, jwt);
+      console.log(response);
+      if (response.success) {
+        message.success("Product created successfully ✅");
+        form.resetFields();
+        onSuccess?.();
+      } else {
+        message.error(response.error || "Error creating product ❌");
+      }
     } catch (error) {
-      message.error("Error al crear producto ❌");
+      message.error("Error creating product");
+      console.error(`❌ ${error} `);
     } finally {
       setLoading(false);
     }
@@ -33,10 +41,6 @@ const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
         name="name"
         rules={[
           { required: true, message: "Por favor escribe un nombre" },
-          {
-            type: "string",
-            message: "El nombre debe ser un texto",
-          },
           {
             validator: (_, value) =>
               typeof value === "string" && value.trim().length > 0

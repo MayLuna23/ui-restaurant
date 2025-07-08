@@ -1,15 +1,18 @@
+@tailwind base;
+@tailwind components;
 @tailwind utilities;
 
 /* 🎨 Variables globales de color */
 :root {
   --color-peach-light: #fce3cc;
+  --color-peach-lighter: #fdf3eb;
   --color-peach: #f8b27e;
   --color-orange-dark: #c16135;
   --color-orange-light: #e48e55;
 }
 
 button {
-  color: white
+  /* color: white */
 }
 
 .primary-button {
@@ -47,4 +50,50 @@ button {
 }
 /* 🔘 Botón degradado */
 .background-orange-dark {
+}
+
+/* styles.css o global.css */
+.custom-menu .ant-menu-item {
+  color: white; /* texto normal */
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+}
+
+.custom-menu .ant-menu-item:hover {
+  background-color: #d97706; /* hover */
+  color: white;
+}
+
+.custom-menu .ant-menu-item-selected {
+  background-color: #ea580c; /* seleccionado */
+  color: white;
+}
+
+/* Fondo y texto para las opciones seleccionadas */
+.custom-select .ant-select-item-option-selected {
+  background-color: var(--color-orange-dark) !important;
+  color: white !important;
+}
+
+/* Color del ícono de check al lado de la opción seleccionada */
+.custom-select .ant-select-item-option-selected .ant-select-item-option-state {
+  color: white !important;
+}
+
+
+.custom-table .ant-table-thead > tr > th {
+  background-color: #ffe9d9;
+  color: #c16135;
+  font-size: 14px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #ffedcc; /* cambia fondo */
+  color: #c16135;            /* cambia color de texto */
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
 }

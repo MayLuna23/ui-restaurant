@@ -1,6 +1,6 @@
-import { Table } from 'antd';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+// src/components/ProductList.tsx
+
+import { Table } from "antd";
 
 interface Product {
   productId: number;
@@ -9,53 +9,44 @@ interface Product {
   createdAt: string;
 }
 
-const ProductList = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchProducts = async () => {
-    try {
-      const res = await axios.get('http://localhost:3000/api/products');
-      setProducts(res.data);
-    } catch (err) {
-      console.error('Error al obtener productos', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
+const ProductList = ({
+  products,
+  loading,
+  error,
+}: {
+  products: Product[];
+  loading: boolean;
+  error: string;
+}) => {
   return (
-    <Table
-      rowKey="productId"
-      dataSource={products}
-      loading={loading}
-      // pagination={{ pageSize: 5 }}
-      columns={[
-        {
-          title: 'Name',
-          dataIndex: 'name',
-        },
-        {
-          title: 'Price',
-          dataIndex: 'price',
-          render: (value: number) =>
-            `$ ${value.toLocaleString('es-CO', {
-              style: 'decimal',
-              minimumFractionDigits: 0,
-            })}`,
-        },
-        {
-          title: 'Fecha de creación',
-          dataIndex: 'createdAt',
-          render: (value: string) =>
-            new Date(value).toLocaleDateString('es-CO'),
-        },
-      ]}
-    />
+    <>
+      {error && <div className="text-red-500 text-center mb-4">{error}</div>}
+      <main className="h-full overflow-y-auto lg:max-w-5xl m-auto">
+        <Table
+          className="custom-table"
+          rowKey="productId"
+          dataSource={products}
+          loading={loading}
+          pagination={false}
+          scroll={{ y: 300 }}
+          columns={[
+            {
+              title: "Name",
+              dataIndex: "name",
+            },
+            {
+              title: "Price",
+              dataIndex: "price",
+              render: (value: number) =>
+                `$ ${value.toLocaleString("es-CO", {
+                  style: "decimal",
+                  minimumFractionDigits: 0,
+                })}`,
+            },
+          ]}
+        />
+      </main>
+    </>
   );
 };
 

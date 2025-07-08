@@ -145,9 +145,9 @@ const OrderForm = () => {
         paddingRight: 16,
       }}
     >
-      <main className="flex flex-row">
+      <main className="flex flex-row gap-2">
         {/* Columna izquierda */}
-        <section className="md:w-2/3 w-full pr-4 min-h-[75vh]">
+        <section className="md:w-2/3 w-full pr-4 min-h-[75vh] rounded-2xl p-5"  style={{ backgroundColor: "var(--color-peach-lighter)" }}>
           <Form
             layout="vertical"
             onFinish={handleSubmit}
@@ -160,6 +160,7 @@ const OrderForm = () => {
                 onChange={handleSelect}
                 value={items.map((item) => item.productId)}
                 tagRender={isMobile ? () => null : undefined}
+              
               >
                 {products.map((product) => (
                   <Option key={product.productId} value={product.productId}>
@@ -182,7 +183,7 @@ const OrderForm = () => {
         </section>
 
         {/* Columna derecha con scroll */}
-        <section className="md:w-1/3 w-full pl-4 overflow-y-auto max-h-[75vh]">
+        <section className="md:w-1/3 w-full pl-4 overflow-y-auto max-h-[75vh] rounded-2xl p-5" style={{backgroundColor: "var(--color-peach-lighter)" }}>
           {items.map((item) => {
             const product = products.find(
               (p) => p.productId === item.productId

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   FileTextOutlined,
+  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PieChartOutlined,
@@ -15,14 +16,22 @@ import { Link, Outlet } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 
 const MainLayout: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: {  borderRadiusLG },
   } = theme.useToken();
-
+  const [isMobile, setIsMobile] = useState(false);
   return (
     <Layout style={{ height: "100vh" }}>
-      <Sider trigger={null} collapsible collapsed={collapsed}>
+      <Sider
+        style={{ backgroundColor: "var(--color-orange-dark)" }}
+        trigger={null}
+        collapsible
+        collapsed={collapsed}
+        collapsedWidth={isMobile ? 0 : 80}
+        breakpoint="md"
+        onBreakpoint={(broken) => setIsMobile(broken)} 
+      >
         <div
           className="demo-logo-vertical"
           style={{
@@ -43,30 +52,39 @@ const MainLayout: React.FC = () => {
         </div>
 
         <Menu
-          theme="dark"
+          className="custom-menu"
+          style={{ backgroundColor: "var(--color-orange-dark)" }}
           mode="inline"
           defaultSelectedKeys={["1"]}
           items={[
             {
-              key: '/productos',
-              icon: <ShoppingOutlined />,
+              key: "/productos",
+              icon: <ShoppingOutlined style={{ fontSize: "1.4rem" }} />,
               label: <Link to="/products">Productos</Link>,
             },
             {
-              key: '/ordenes',
-              icon: <FileTextOutlined />,
+              key: "/ordenes",
+              icon: <FileTextOutlined style={{ fontSize: "1.4rem" }} />,
               label: <Link to="/orders">Create Order</Link>,
             },
             {
-              key: '/dashboard',
-              icon: <PieChartOutlined />,
+              key: "/dashboard",
+              icon: <PieChartOutlined style={{ fontSize: "1.4rem" }} />,
               label: <Link to="/dashboard">Dashboard</Link>,
+            },
+            {
+              key: "/logout",
+              icon: <LogoutOutlined style={{ fontSize: "1.4rem" }} />,
+              label: <Link to="/dashboard">Log Out</Link>,
             },
           ]}
         />
       </Sider>
-      <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }}>
+      <Layout className="bg-orange-gradient">
+        <Header
+          className="bg-orange-gradient"
+          style={{ padding: 0, height: 100 }}
+        >
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -74,7 +92,7 @@ const MainLayout: React.FC = () => {
             style={{
               fontSize: "16px",
               width: 64,
-              height: 64,
+              height: 100,
             }}
           />
         </Header>
@@ -83,7 +101,7 @@ const MainLayout: React.FC = () => {
             margin: "24px 16px",
             padding: 24,
             minHeight: 280,
-            background: colorBgContainer,
+            // background: "var(--color-peach-light)",
             borderRadius: borderRadiusLG,
           }}
         >

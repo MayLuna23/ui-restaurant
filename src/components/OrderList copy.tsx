@@ -12,7 +12,6 @@ import {
   message,
 } from "antd";
 import dayjs from "dayjs";
-import { CustomNotification } from "./Notification";
 
 const { RangePicker } = DatePicker;
 
@@ -31,8 +30,9 @@ interface Order {
   }[];
 }
 
-const token =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsIm5hbWUiOiJNYXlyYSBMb3BleiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoibWF5cmEyQGV4YW1wbGUuY29tIiwiY3JlYXRlZEF0IjoiMjAyNS0wNy0wOFQwMTozNzo0MC41MTRaIiwiaWF0IjoxNzUxOTM5Mjc2fQ._CUKnr365IdS0F5ADZnkO1n6EeKgLGFpUK9LTLbdAFs";
+      const token =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsIm5hbWUiOiJNYXlyYSBMb3BleiIsInJvbGUiOiJhZG1pbiIsImVtYWlsIjoibWF5cmEyQGV4YW1wbGUuY29tIiwiY3JlYXRlZEF0IjoiMjAyNS0wNy0wOFQwMTozNzo0MC41MTRaIiwiaWF0IjoxNzUxOTM5Mjc2fQ._CUKnr365IdS0F5ADZnkO1n6EeKgLGFpUK9LTLbdAFs";
+
 
 const OrderList = () => {
   const [orders, setOrders] = useState<Order[]>([]);
@@ -41,7 +41,6 @@ const OrderList = () => {
 
   const fetchOrders = async () => {
     setLoading(true);
-    form.resetFields()
     try {
       // const token = localStorage.getItem("token");
 
@@ -63,59 +62,59 @@ const OrderList = () => {
   };
 
   const filterOrders = async () => {
-    const { totalRange = {}, startDate, endDate } = form.getFieldsValue();
+  const {
+    totalRange = {},
+    startDate,
+    endDate,
+  } = form.getFieldsValue();
 
-    const payload: any = {};
+  const payload: any = {};
 
-    if (totalRange.min != null) payload.minTotal = totalRange.min;
-    if (totalRange.max != null) payload.maxTotal = totalRange.max;
-    console.log(totalRange, startDate, endDate);
-    if (startDate) payload.startDate = dayjs(startDate).format("YYYY-MM-DD");
-    if (endDate) payload.endDate = dayjs(endDate).format("YYYY-MM-DD");
+  if (totalRange.min != null) payload.minTotal = totalRange.min;
+  if (totalRange.max != null) payload.maxTotal = totalRange.max;
 
-    // 🔴 Validaciones
-    if (payload.minTotal != null && payload.maxTotal != null) {
-      if (payload.minTotal > payload.maxTotal) {
-        console.log("ASASDDASDAS");
-        message.error("Minimum total cannot be greater than maximum total.");
-        return;
-      }
-    }
+  if (startDate) payload.startDate = dayjs(startDate).format("YYYY-MM-DD");
+  if (endDate) payload.endDate = dayjs(endDate).format("YYYY-MM-DD");
 
-    if (startDate && endDate) {
-      if (dayjs(startDate).isAfter(dayjs(endDate))) {
-        message.error("Start date cannot be after end date.");
-        return;
-      }
-    }
-
-    if (Object.keys(payload).length === 0) {
-      message.error("Please select at least one filter.");
+  // 🔴 Validaciones
+  if (payload.minTotal != null && payload.maxTotal != null) {
+    if (payload.minTotal > payload.maxTotal) {
+      message.error("Minimum total cannot be greater than maximum total.");
       return;
     }
+  }
 
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        "http://localhost:3000/api/v1/restaurant/orders/filter",
-        payload,
+  if (startDate && endDate) {
+    if (dayjs(startDate).isAfter(dayjs(endDate))) {
+      message.error("Start date cannot be after end date.");
+      return;
+    }
+  }
+
+  if (Object.keys(payload).length === 0) {
+    message.warning("Please select at least one filter.");
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const res = await axios.post(
+      "http://localhost:3000/api/v1/restaurant/orders/filter",
+      payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
-      );
-      if (res.data.data.length === 0) {
-        message.info("No orders found for the selected filters.");
-      }
-      setOrders(res.data.data);
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || "Error filtering orders";
-      message.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
+    );
+    setOrders(res.data.data);
+  } catch (err: any) {
+    const msg = err?.response?.data?.message || "Error filtering orders";
+    message.error(msg);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleDelete = (orderId: number) => {
     Modal.confirm({
@@ -151,14 +150,10 @@ const OrderList = () => {
         className="flex justify-center flex-wrap md:gap-4 md:mb-12"
         style={{ marginBottom: "2rem" }}
       >
-        <Form.Item label="Total">
+        <Form.Item label="Total" name={["totalRange"]}>
           <Space>
-            <Form.Item name={["totalRange", "min"]} noStyle>
-              <InputNumber min={0} placeholder="Min" />
-            </Form.Item>
-            <Form.Item name={["totalRange", "max"]} noStyle>
-              <InputNumber min={0} placeholder="Max" />
-            </Form.Item>
+            <InputNumber min={0} placeholder="Mín" name="min" />
+            <InputNumber min={0} placeholder="Máx" name="max" />
           </Space>
         </Form.Item>
 

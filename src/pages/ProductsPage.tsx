@@ -1,14 +1,50 @@
-import ProductForm from '../components/ProductForm';
-import ProductList from '../components/ProductList';
+// src/pages/ProductsPage.tsx
+
+import { useEffect, useState } from "react";
+import ProductForm from "../components/ProductForm";
+import ProductList from "../components/ProductList";
+import { fetchProducts } from "@/api/products";
+
+interface Product {
+  productId: number;
+  name: string;
+  price: number;
+  createdAt: string;
+}
 
 const ProductsPage = () => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMssg, setErrorMssg] = useState("");
+
+  const getProducts = async () => {
+    setLoading(true);
+    try {
+      const jwt = localStorage.getItem("jwt") || "";
+      const res = await fetchProducts(jwt);
+
+      res.success ? setProducts(res.data?.data || []) : setProducts([]);
+    } catch (err) {
+      setErrorMssg("Error al obtener productos");
+      console.error("Error al obtener productos", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getProducts();
+  }, []);
+
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-6">Productos 🍔</h2>
-      <ProductForm onSuccess={() => window.location.reload()} />
+
+      <ProductForm onSuccess={getProducts} />
+
       <div className="mt-10">
         <h3 className="text-lg font-semibold mb-4">Lista de productos</h3>
-        <ProductList />
+        <ProductList products={products} loading={loading} error={errorMssg} />
       </div>
     </div>
   );
