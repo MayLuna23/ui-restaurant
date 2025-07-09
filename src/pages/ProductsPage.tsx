@@ -4,6 +4,7 @@ import ProductList from "../components/ProductList";
 import { fetchProductsReq } from "@/api/products";
 import { useAuth } from "@/context/AuthContext";
 import { useIsMobile } from "@/hooks/useIsMobile";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 interface Product {
   productId: number;
@@ -13,6 +14,7 @@ interface Product {
 }
 
 const ProductsPage = () => {
+  useDocumentTitle("Products | Ocean App");
   const isMobile = useIsMobile();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);

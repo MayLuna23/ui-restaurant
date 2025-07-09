@@ -4,10 +4,12 @@ import axios from "axios";
 import Logo from "@/components/AppLogo";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 const { Title } = Typography;
 
 const LoginPage = () => {
+  useDocumentTitle("Ocean App");
   const [form] = Form.useForm();
   const { login } = useAuth();
   const navigate = useNavigate();

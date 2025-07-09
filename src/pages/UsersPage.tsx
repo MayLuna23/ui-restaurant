@@ -5,6 +5,7 @@ import UserForm from "@/components/UserForm";
 // import UserList from "../components/UserList";
 import { fetchUsersReq } from "@/api/users";
 import UserList from "@/components/UserList";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 type User = {
   name: string;
@@ -18,7 +19,7 @@ const UsersPage = () => {
   const [loading, setLoading] = useState(false);
   const [errorMssg, setErrorMssg] = useState("");
   const [showUsersTable, setShowUsersTable] = useState(true);
-
+  useDocumentTitle("Users | Ocean App");
   const getUsers = async () => {
     setLoading(true);
     try {
