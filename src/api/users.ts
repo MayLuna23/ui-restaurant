@@ -15,7 +15,7 @@ type FetchUsersResponse = {
   status?: number;
 };
 
-export const fetchUsers = async (jwt: string): Promise<FetchUsersResponse> => {
+export const fetchUsersReq = async (jwt: string): Promise<FetchUsersResponse> => {
   try {
     const response = await axios.get(`${API_URL}/users`, {
       headers: {

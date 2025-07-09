@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import UserForm from "@/components/UserForm";
 // import UserList from "../components/UserList";
-import { fetchUsers } from "@/api/users";
+import { fetchUsersReq } from "@/api/users";
 import UserList from "@/components/UserList";
 
 type User = {
@@ -23,7 +23,7 @@ const UsersPage = () => {
     setLoading(true);
     try {
       const jwt = localStorage.getItem("jwt") || "";
-      const res = await fetchUsers(jwt);
+      const res = await fetchUsersReq(jwt);
       console.log(res);
       res.success ? setUsers(res.data?.data || []) : setUsers([]);
     } catch (err) {

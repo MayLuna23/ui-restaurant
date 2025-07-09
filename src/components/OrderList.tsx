@@ -10,13 +10,16 @@ import {
   Form,
   Space,
   message,
+  Input,
+  Select,
 } from "antd";
 import dayjs from "dayjs";
 import { CustomNotification } from "./Notification";
 import { useAuth } from "@/context/AuthContext";
 import { deleteOrder, fetchOrdersReq, filterOrdersReq } from "@/api/orders";
-
-const { RangePicker } = DatePicker;
+import { fetchUsersReq } from "@/api/users";
+import SyncLoader from "react-spinners/SyncLoader";
+const { Option } = Select;
 
 interface Order {
   orderId: number;
@@ -36,8 +39,9 @@ interface Order {
 const OrderList = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
   const [form] = Form.useForm();
-  const { isAdmin } = useAuth();
+  const { isAdmin, userName } = useAuth();
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -45,6 +49,8 @@ const OrderList = () => {
     try {
       const token = localStorage.getItem("jwt") || "";
       const res = await fetchOrdersReq(token, isAdmin);
+      const resUsers = await fetchUsersReq(token);
+      setUsers(resUsers.data.data);
       setOrders(res.data.data);
     } catch (err) {
       console.error("Error al obtener órdenes", err);
@@ -54,16 +60,29 @@ const OrderList = () => {
   };
 
   const filterOrders = async () => {
-    const { totalRange = {}, startDate, endDate } = form.getFieldsValue();
-
+    const {
+      totalRange = {},
+      startDate,
+      endDate,
+      bodyUserId,
+    } = form.getFieldsValue();
     const payload: any = {};
 
     if (totalRange.min != null) payload.minTotal = totalRange.min;
     if (totalRange.max != null) payload.maxTotal = totalRange.max;
     if (startDate) payload.startDate = dayjs(startDate).format("YYYY-MM-DD");
     if (endDate) payload.endDate = dayjs(endDate).format("YYYY-MM-DD");
+    if (bodyUserId) payload.bodyUserId = bodyUserId;
 
     // 🔴 Validaciones
+    if (
+      (payload.minTotal && !payload.maxTotal) ||
+      (!payload.minTotal && payload.maxTotal)
+    ) {
+      message.error("Please select the minimum and maximum total");
+      return;
+    }
+
     if (payload.minTotal != null && payload.maxTotal != null) {
       if (payload.minTotal > payload.maxTotal) {
         message.error("Minimum total cannot be greater than maximum total.");
@@ -79,10 +98,8 @@ const OrderList = () => {
     }
 
     if ((startDate && !endDate) || (!startDate && endDate)) {
-
-        message.error("Please select both dates");
-        return;
-      
+      message.error("Please select both dates");
+      return;
     }
 
     if (Object.keys(payload).length === 0) {
@@ -93,7 +110,7 @@ const OrderList = () => {
     setLoading(true);
     try {
       const jwt = localStorage.getItem("jwt") || "";
-      const res = await filterOrdersReq(payload, jwt)                                                                    ;
+      const res = await filterOrdersReq(payload, jwt);
       if (res.data.data.length === 0) {
         message.info("No orders found for the selected filters.");
       }
@@ -181,6 +198,38 @@ const OrderList = () => {
           <DatePicker format="YYYY-MM-DD" />
         </Form.Item>
 
+        {isAdmin && (
+          <Form.Item label="" name="bodyUserId">
+            <Select
+              name="user"
+              placeholder="Users"
+              // onChange={handleSelect}
+              showSearch
+              filterOption={(input, option) =>
+                option?.children
+                  ?.toString()
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
+              }
+            >
+              {users.map((user) => (
+                <Option key={user.userId} value={user.userId}>
+                  {user.name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
+
+        {/* <Form.Item
+          name="user"
+          rules={[
+            { type: "string", message: "The email format is invalid" },
+          ]}
+        >
+          <Input placeholder="User" />
+        </Form.Item> */}
+
         <div className="flex flex-row gap-2">
           <Form.Item>
             <Button className="w-22" type="primary" onClick={filterOrders}>
@@ -196,9 +245,19 @@ const OrderList = () => {
         </div>
       </Form>
 
+      <div className="text-center mb-8">
+        {isAdmin ? (
+          <span>Here you can view and filter all users' orders.</span>
+        ) : (
+          <span>
+            {userName}, Here you can see and filter all orders in your name.
+          </span>
+        )}
+      </div>
+
       {/* Lista de órdenes */}
       {loading ? (
-        <p className="text-gray-500">Loading orders...</p>
+        <div className="min-h-[40vh] flex justify-center items-center" ><SyncLoader color="#c16135" /></div>
       ) : orders.length === 0 ? (
         <p className="text-gray-500 text-center mt-8">No orders found.</p>
       ) : (
@@ -209,12 +268,14 @@ const OrderList = () => {
               className="bg-white shadow-md rounded-lg border border-gray-200 p-4 relative"
             >
               <Tooltip title="Delete order" placement="top">
-                {isAdmin && (<DeleteOutlined
-                  onClick={() =>
-                    handleDelete(order.orderId, order.total, order.createdAt)
-                  }
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700 cursor-pointer text-lg"
-                />)}
+                {isAdmin && (
+                  <DeleteOutlined
+                    onClick={() =>
+                      handleDelete(order.orderId, order.total, order.createdAt)
+                    }
+                    className="absolute top-2 right-2 text-red-500 hover:text-red-700 cursor-pointer text-lg"
+                  />
+                )}
               </Tooltip>
 
               <div className="text-sm mb-1">
@@ -241,7 +302,8 @@ const OrderList = () => {
                   {order.OrderItem.map((item, index) => (
                     <span
                       key={index}
-                      className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded"
+                      style={{backgroundColor: "var(--color-peach-light)"}}
+                      className="color-orange-dark color-orange-light text-xs font-medium px-2 py-1 rounded"
                     >
                       {item.product.name} × {item.quantity}
                     </span>
