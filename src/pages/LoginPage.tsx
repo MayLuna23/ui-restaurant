@@ -12,12 +12,13 @@ const LoginPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const onFinish = async (values: { email: string; password: string }) => {
+
     try {
       const res = await login(values.email, values.password);
       if (res) {
-        form.resetFields();
-        message.success("Login successful");
         navigate("/dashboard");
+        message.success("Login successful");
+        form.resetFields();
       } else {
         message.error("Login failed. Please check your credentials.");
       }
@@ -30,12 +31,12 @@ const LoginPage = () => {
   return (
     <div className="bg-orange-gradient min-h-screen flex flex-col items-center">
       {/* Título arriba */}
-      <div className="py-8">
+      <div className="py-8 pt-24">
         <Logo size="6rem" />
       </div>
 
       {/* Formulario centrado en el espacio restante */}
-      <div className="flex-1 flex items-center justify-center w-full px-4">
+      <div className="flex-1 flex  justify-center w-full px-4 pt-12">
         <Card className="w-full max-w-md border-0 rounded-xl bg-transparent">
           <Title
             style={{ color: "var(--color-orange-dark)" }}
@@ -63,13 +64,13 @@ const LoginPage = () => {
             <Form.Item
               name="password"
               rules={[
-                { required: true, message: "La contraseña es obligatoria" },
+                { required: true, message: "Password is required" },
               ]}
             >
               <Input.Password placeholder="Password" />
             </Form.Item>
 
-            <Form.Item className="text-center">
+            <Form.Item style={{marginTop: "46px"}}  className="text-center">
               <CustomButton isPrimary={true} label="Log In" />
             </Form.Item>
           </Form>

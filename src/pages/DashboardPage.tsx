@@ -3,7 +3,7 @@ import OrderList from '../components/OrderList';
 const DashboardPage = () => {
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Dashboard de Órdenes 📊</h2>
+      <h2 style={{marginBottom: "32px"}} className="text-2xl font-semibold text-center color-brown-light">Dashboard</h2>
       <OrderList />
     </div>
   );

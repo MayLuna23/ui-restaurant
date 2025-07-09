@@ -17,9 +17,9 @@ const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
   const [errorMssg, setErrorMssg] = useState("");
+  const [showUsersTable, setShowUsersTable] = useState(true);
 
   const getUsers = async () => {
-    // await Promise.resolve(); // Simulate a delay for loading state
     setLoading(true);
     try {
       const jwt = localStorage.getItem("jwt") || "";
@@ -40,12 +40,22 @@ const UsersPage = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Users</h2>
-        <UserForm onSuccess={getUsers} />
+      <h2 className="text-2xl font-semibold mb-6 color-brown-light text-center">
+        Users
+      </h2>
+      <UserForm
+        onSuccess={getUsers}
+        setLoading={setLoading}
+        loading={loading}
+        setShowUsersTable={setShowUsersTable}
+        showUsersTable={showUsersTable}
+      />
 
-        <div className="mt-10">
+      <div className="mt-10">
+        {showUsersTable && (
           <UserList users={users} loading={loading} error={errorMssg} />
-        </div>
+        )}
+      </div>
     </div>
   );
 };

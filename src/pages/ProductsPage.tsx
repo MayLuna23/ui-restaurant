@@ -3,6 +3,7 @@ import ProductForm from "../components/ProductForm";
 import ProductList from "../components/ProductList";
 import { fetchProductsReq } from "@/api/products";
 import { useAuth } from "@/context/AuthContext";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 interface Product {
   productId: number;
@@ -12,6 +13,7 @@ interface Product {
 }
 
 const ProductsPage = () => {
+  const isMobile = useIsMobile();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMssg, setErrorMssg] = useState("");
@@ -37,11 +39,15 @@ const ProductsPage = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Products</h2>
+      <h2  className="text-2xl font-semibold mb-6 color-brown-light text-center">Products</h2>
 
-      {isAdmin && <ProductForm onSuccess={getProducts} />}
+      {isAdmin && (
+        <div className="w-100vw grid place-content-center">
+          <ProductForm onSuccess={getProducts} />
+        </div>
+      )}
 
-      <div className="mt-10">
+      <div  className="mt-10">
         <ProductList products={products} loading={loading} error={errorMssg} />
       </div>
     </div>

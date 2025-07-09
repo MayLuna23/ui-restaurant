@@ -19,6 +19,7 @@ import { useAuth } from "@/context/AuthContext";
 import { deleteOrder, fetchOrdersReq, filterOrdersReq } from "@/api/orders";
 import { fetchUsersReq } from "@/api/users";
 import SyncLoader from "react-spinners/SyncLoader";
+import { useIsMobile } from "@/hooks/useIsMobile";
 const { Option } = Select;
 
 interface Order {
@@ -37,6 +38,7 @@ interface Order {
 }
 
 const OrderList = () => {
+  const isMobile = useIsMobile();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
@@ -49,9 +51,11 @@ const OrderList = () => {
     try {
       const token = localStorage.getItem("jwt") || "";
       const res = await fetchOrdersReq(token, isAdmin);
-      const resUsers = await fetchUsersReq(token);
-      setUsers(resUsers.data.data);
       setOrders(res.data.data);
+      if (isAdmin) {
+        const resUsers = await fetchUsersReq(token);
+        setUsers(resUsers.data.data);
+      }
     } catch (err) {
       console.error("Error al obtener órdenes", err);
     } finally {
@@ -123,46 +127,47 @@ const OrderList = () => {
     }
   };
 
-  const handleDelete = (orderId: number, total: number, date: string) => {
-    const jwt = localStorage.getItem("jwt") || "";
-    Modal.confirm({
-      title: "¿Estás seguro de eliminar esta orden?",
-      content: (
-        <div>
-          <span className="font-bold">Total:</span> $
-          {total.toLocaleString("es-CO")}{" "}
-          <span className="font-bold">Date:</span>{" "}
-          {new Date(date).toLocaleString("es-CO", {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })}
-        </div>
-      ),
-      okText: "Eliminar",
-      cancelText: "Cancelar",
-      okType: "danger",
-      centered: true,
-      onOk: async () => {
-        try {
-          const req = await deleteOrder(orderId, jwt);
-          if (req.success) {
-            CustomNotification({
-              type: "success",
-              message: "Orden eliminada correctamente",
-            });
-            fetchOrders(); // Refrescar la lista de órdenes
-          } else {
-            CustomNotification({
-              type: "error",
-              message: req.error || "Error al eliminar la orden",
-            });
-          }
-        } catch (err) {
-          console.error("Error al eliminar la orden", err);
+const handleDelete = (orderId: number, total: number, date: string) => {
+  const jwt = localStorage.getItem("jwt") || "";
+  Modal.confirm({
+    title: "Are you sure you want to delete this order?",
+    content: (
+      <div>
+        <span className="font-bold">Total:</span> $
+        {total.toLocaleString("en-US")}{" "}
+        <span className="font-bold">Date:</span>{" "}
+        {new Date(date).toLocaleString("en-US", {
+          dateStyle: "medium",
+          timeStyle: "short",
+        })}
+      </div>
+    ),
+    okText: "Delete",
+    cancelText: "Cancel",
+    okType: "danger",
+    centered: true,
+    onOk: async () => {
+      try {
+        const req = await deleteOrder(orderId, jwt);
+        if (req.success) {
+          CustomNotification({
+            type: "success",
+            message: "Order deleted successfully",
+          });
+          fetchOrders(); // Refresh the list of orders
+        } else {
+          CustomNotification({
+            type: "error",
+            message: req.error || "Error deleting order",
+          });
         }
-      },
-    });
-  };
+      } catch (err) {
+        console.error("Error deleting order", err);
+      }
+    },
+  });
+};
+
 
   useEffect(() => {
     fetchOrders();
@@ -177,7 +182,11 @@ const OrderList = () => {
         className="flex justify-center flex-wrap md:gap-4 md:mb-12"
         style={{ marginBottom: "2rem" }}
       >
-        <Form.Item label="Total">
+        <Form.Item
+          label={
+            <span style={{ color: "var(--color-brown-light)" }}>Total</span>
+          }
+        >
           <Space>
             <Form.Item name={["totalRange", "min"]} noStyle>
               <InputNumber min={0} placeholder="Min" />
@@ -188,19 +197,35 @@ const OrderList = () => {
           </Space>
         </Form.Item>
 
-        {/* Fecha de inicio */}
-        <Form.Item label="Start Date" name="startDate">
+        <Form.Item
+          label={
+            <span style={{ color: "var(--color-brown-light)" }}>
+              Start Date
+            </span>
+          }
+          name="startDate"
+        >
           <DatePicker format="YYYY-MM-DD" />
         </Form.Item>
 
-        {/* Fecha de fin */}
-        <Form.Item label="End Date" name="endDate">
+        <Form.Item
+          label={
+            <span style={{ color: "var(--color-brown-light)" }}>End Date</span>
+          }
+          name="endDate"
+        >
           <DatePicker format="YYYY-MM-DD" />
         </Form.Item>
 
         {isAdmin && (
-          <Form.Item label="" name="bodyUserId">
+          <Form.Item           label={
+            <span style={{ color: "var(--color-brown-light)" }}>
+              User
+            </span>
+          } name="bodyUserId">
+            
             <Select
+            style={{width: "150px"}}
               name="user"
               placeholder="Users"
               // onChange={handleSelect}
@@ -221,24 +246,15 @@ const OrderList = () => {
           </Form.Item>
         )}
 
-        {/* <Form.Item
-          name="user"
-          rules={[
-            { type: "string", message: "The email format is invalid" },
-          ]}
-        >
-          <Input placeholder="User" />
-        </Form.Item> */}
-
-        <div className="flex flex-row gap-2">
+        <div style={{marginTop: isMobile ? "10px" : ""}} className="flex flex-row gap-2">
           <Form.Item>
-            <Button className="w-22" type="primary" onClick={filterOrders}>
+            <Button style={{backgroundColor: "var(--color-orange-dark)", fontWeight: "bold" }} className="w-22" type="primary" onClick={filterOrders}>
               Filter
             </Button>
           </Form.Item>
 
           <Form.Item>
-            <Button className="w-22" onClick={fetchOrders}>
+            <Button style={{ fontWeight: "bold", color: "var(--color-orange-dark"}} className="w-22" onClick={fetchOrders}>
               Clear
             </Button>
           </Form.Item>
@@ -247,9 +263,9 @@ const OrderList = () => {
 
       <div className="text-center mb-8">
         {isAdmin ? (
-          <span>Here you can view and filter all users' orders.</span>
+          <span style={{ color: "var(--color-brown-light)" }}>Here you can view and filter all users' orders.</span>
         ) : (
-          <span>
+          <span style={{ color: "var(--color-brown-light)" }}>
             {userName}, Here you can see and filter all orders in your name.
           </span>
         )}
@@ -257,11 +273,16 @@ const OrderList = () => {
 
       {/* Lista de órdenes */}
       {loading ? (
-        <div className="min-h-[40vh] flex justify-center items-center" ><SyncLoader color="#c16135" /></div>
+        <div className="min-h-[40vh] flex justify-center items-center">
+          <SyncLoader color="#c16135" />
+        </div>
       ) : orders.length === 0 ? (
         <p className="text-gray-500 text-center mt-8">No orders found.</p>
       ) : (
-        <div className="space-y-4 md:max-h-[68vh] max-h-[55vh] overflow-y-auto p-0 md:w-2/3 md:m-auto md:mt-12">
+        <div
+          style={{ height: isMobile ? "42vh" : "60vh" }}
+          className="space-y-4 overflow-y-auto p-0 md:w-2/3 md:m-auto md:mt-12"
+        >
           {orders.map((order) => (
             <div
               key={order.orderId}
@@ -302,7 +323,7 @@ const OrderList = () => {
                   {order.OrderItem.map((item, index) => (
                     <span
                       key={index}
-                      style={{backgroundColor: "var(--color-peach-light)"}}
+                      style={{ backgroundColor: "var(--color-peach-light)" }}
                       className="color-orange-dark color-orange-light text-xs font-medium px-2 py-1 rounded"
                     >
                       {item.product.name} × {item.quantity}

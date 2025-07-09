@@ -34,7 +34,7 @@ const UserList = ({
           dataSource={users}
           loading={loading}
           pagination={false}
-          scroll={{ y: 400 }}
+          scroll={{ y: isMobile ? 500 : 400 }}
           columns={[
             {
               title: "Name",
@@ -51,7 +51,7 @@ const UserList = ({
                 role.charAt(0).toUpperCase() + role.slice(1),
             },
             {
-              title: "Created At",
+              title: "Date",
               dataIndex: "createdAt",
               render: (value: string) =>
                 new Date(value).toLocaleDateString("en-US", {

@@ -4,6 +4,7 @@ import axios from "axios";
 import { CustomNotification } from "./Notification";
 import { createOrder } from "@/api/orders";
 import { fetchProductsReq } from "@/api/products";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -23,8 +24,8 @@ const OrderForm = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [items, setItems] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-const [form] = Form.useForm();
+  const isMobile = useIsMobile();
+  const [form] = Form.useForm();
 
   const fetchProducts = async () => {
     try {
@@ -39,15 +40,6 @@ const [form] = Form.useForm();
     }
   };
 
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   useEffect(() => {
     fetchProducts();
@@ -77,54 +69,54 @@ const [form] = Form.useForm();
   }, [items, products]);
 
   const handleSubmit = async () => {
-    if (items.length === 0) {
-      CustomNotification({
-        type: "warning",
-        message: "Selecciona al menos un producto",
-      });
-      return;
-    }
+  if (items.length === 0) {
+    CustomNotification({
+      type: "warning",
+      message: "Please select at least one product",
+    });
+    return;
+  }
 
-    setLoading(true);
-    try {
-      const jwt = localStorage.getItem("jwt") || "";
-      console.log(items);
-      const response = await createOrder({ items: items }, jwt);
-      console.log(response);
-      CustomNotification({
-        type: "success",
-        message: "Orden creada exitosamente",
-        description: "Tu orden fue registrada correctamente.",
-      });
-      setItems([]);
-      form.resetFields();
-    } catch (err) {
-      CustomNotification({
-        type: "error",
-        message: "Error al crear orden",
-        description: "Intenta nuevamente más tarde.",
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const jwt = localStorage.getItem("jwt") || "";
+    console.log(items);
+    const response = await createOrder({ items: items }, jwt);
+    console.log(response);
+    CustomNotification({
+      type: "success",
+      message: "Order created successfully",
+      description: "Your order has been placed correctly.",
+    });
+    setItems([]);
+    form.resetFields();
+  } catch (err) {
+    CustomNotification({
+      type: "error",
+      message: "Error creating order",
+      description: "Please try again later.",
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div
       style={{
         maxHeight: "80vh",
-        paddingRight: 16,
       }}
     >
-      <main className="flex flex-row gap-2">
+      <main style={{flexDirection: isMobile ? "column" : "row", height: isMobile ? "71vh" : "75vh"}} className="flex gap-2 lg:w-4/5 m-auto">
         {/* Columna izquierda */}
         <section
-          className="md:w-2/3 w-full pr-4 min-h-[75vh] rounded-2xl p-5"
-          style={{ backgroundColor: "var(--color-peach-lighter)" }}
+          className=" w-full pr-4  rounded-2xl p-5"
+          style={{ backgroundColor: "var(--color-peach-lighter)", height: isMobile ? "40vh" : "70vh" }}
         >
-            <Title level={3} className="mb-4">
-              Create Order
-            </Title>
+          <Title style={{color: "#633219"}} level={4} className="mb-4">
+            Select Products
+          </Title>
           <Form
             form={form}
             layout="vertical"
@@ -155,10 +147,15 @@ const [form] = Form.useForm();
             </Form.Item>
 
             <div>
-              <Title level={4}>Total: ${total.toLocaleString("es-CO")}</Title>
+              <Title style={{color: "#633219"}} level={4}>Total: ${total.toLocaleString("es-CO")}</Title>
 
               <Form.Item>
-                <Button style={{marginBottom: "12px"}} type="primary" htmlType="submit" loading={loading}>
+                <Button
+                  style={{ marginBottom: isMobile ? "20px" : "16px", fontSize: isMobile ? "16px" : "20px", width: isMobile ? "80px" : "120px", height: isMobile ? "35px" : "40px", backgroundColor: "var(--color-orange-dark)"  }}
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading}
+                >
                   Create
                 </Button>
               </Form.Item>
@@ -169,9 +166,9 @@ const [form] = Form.useForm();
         {/* Columna derecha con scroll */}
         <section
           className="md:w-1/3 w-full pl-4 overflow-y-auto max-h-[75vh] rounded-2xl p-5"
-          style={{ backgroundColor: "var(--color-peach-lighter)" }}
+          style={{ backgroundColor: "var(--color-peach-lighter)", height: isMobile ? "40vh" : "70vh" }}
         >
-          <Title level={4} className="mb-4">
+          <Title style={{color: "#633219"}} level={4} className="mb-4">
             Order Items - Select Quantity
           </Title>
           {items.map((item) => {

@@ -1,5 +1,4 @@
-// src/components/ProductList.tsx
-
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { Table } from "antd";
 
 interface Product {
@@ -18,21 +17,31 @@ const ProductList = ({
   loading: boolean;
   error: string;
 }) => {
+  const isMobile = useIsMobile();
+
   return (
     <>
       {error && <div className="text-red-500 text-center mb-4">{error}</div>}
-      <main className="h-full overflow-y-auto lg:max-w-5xl m-auto">
+      <main className="lg:w-2/3 m-auto" >
         <Table
           className="custom-table"
           rowKey="productId"
           dataSource={products}
           loading={loading}
           pagination={false}
-          scroll={{ y: 300 }}
+          scroll={{ y: isMobile ? 300 : 400 }}
           columns={[
             {
               title: "Name",
               dataIndex: "name",
+              render: (text: string) =>
+                text
+                  .split(" ")
+                  .map(
+                    (word) =>
+                      word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                  )
+                  .join(" "),
             },
             {
               title: "Price",

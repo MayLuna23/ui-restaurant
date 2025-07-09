@@ -4,7 +4,7 @@ import OrderForm from '../components/OrderForm';
 const OrdersPage = () => {
   return (
     <div>
-      {/* <h2 className="text-2xl font-semibold mb-6">Crear Orden 🧾</h2> */}
+      <h2 style={{marginBottom: "32px"}} className="text-2xl font-semibold text-center color-brown-light">Create Order</h2>
       <OrderForm />
     </div>
   );

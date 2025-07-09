@@ -6,25 +6,25 @@ import {
   PieChartOutlined,
   ShoppingOutlined,
 } from "@ant-design/icons";
-import { Button, Layout, Menu, Modal, theme } from "antd";
+import { Button, Layout, Menu, Modal, theme, Tooltip } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
 import Logo from "@/components/AppLogo";
 import { useAuth } from "@/context/AuthContext";
 import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { Tooltip } from "antd";
+import { useIsMobile } from "@/hooks/useIsMobile";
 
 const { Header, Sider, Content } = Layout;
 
 const MainLayout: React.FC = () => {
+  const isMobile = useIsMobile();
   const navigate = useNavigate();
   const { isAdmin, logout, userName } = useAuth();
   const [collapsed, setCollapsed] = useState(true);
   const {
     token: { borderRadiusLG },
   } = theme.useToken();
-  const [isMobile, setIsMobile] = useState(false);
 
   const formatUserName = (name: string) => {
     const firstWord = name.split(" ")[0];
@@ -33,17 +33,40 @@ const MainLayout: React.FC = () => {
 
   return (
     <Layout style={{ height: "100vh" }}>
+      {/* Overlay for mobile when sidebar is open */}
+      {isMobile && !collapsed && (
+        <div
+          onClick={() => setCollapsed(true)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0,0,0,0.3)",
+            zIndex: 999,
+          }}
+        />
+      )}
+
+      {/* Sidebar */}
       <Sider
-        style={{ backgroundColor: "var(--color-orange-dark)" }}
+        style={{
+          backgroundColor: "var(--color-orange-dark)",
+          position: "fixed",
+          height: "100vh",
+          left: 0,
+          top: 0,
+          bottom: 0,
+          zIndex: 1000,
+        }}
+        width={200}
         trigger={null}
         collapsible
         collapsed={collapsed}
         collapsedWidth={isMobile ? 0 : 80}
-        breakpoint="md"
-        onBreakpoint={(broken) => setIsMobile(broken)}
       >
         <div
-          className="demo-logo-vertical"
           style={{
             height: 64,
             margin: 16,
@@ -61,9 +84,7 @@ const MainLayout: React.FC = () => {
         >
           {collapsed ? (
             <Tooltip
-              title={`${formatUserName(userName)} (${
-                isAdmin ? "Admin" : "Waiter"
-              })`}
+              title={`${formatUserName(userName)} (${isAdmin ? "Admin" : "Waiter"})`}
               placement="right"
             >
               <AccountCircleIcon />
@@ -76,6 +97,7 @@ const MainLayout: React.FC = () => {
           )}
         </div>
 
+        {/* Menu */}
         <Menu
           className="custom-menu"
           style={{ backgroundColor: "var(--color-orange-dark)" }}
@@ -132,38 +154,56 @@ const MainLayout: React.FC = () => {
           ]}
         />
       </Sider>
-      <Layout className="bg-orange-gradient">
+
+      {/* Main layout content */}
+      <Layout
+        className="bg-orange-gradient"
+        style={{
+          marginLeft: isMobile ? 0 : collapsed ? 80 : 200,
+          transition: "margin-left 0.3s",
+          display: "flex",
+          flexDirection: "column",
+          height: "100vh",
+          overflow: "hidden",
+        }}
+      >
+        {/* Header */}
         <Header
           className="bg-orange-gradient relative flex items-center justify-center"
           style={{ padding: 0, height: 100 }}
         >
-          {/* Botón fijo a la izquierda */}
+          {/* Toggle button */}
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
             style={{
+              color: "var(--color-brown-light)",
               fontSize: "16px",
               width: 64,
               height: 100,
               position: "absolute",
               left: 0,
               top: 0,
+              marginLeft: isMobile ? 0 : 0,
+              transition: "margin-left 0.3s",
             }}
           />
 
-          {/* Logo centrado */}
+          {/* Logo */}
           <div className="flex items-center justify-center">
             <Logo />
           </div>
         </Header>
 
+        {/* Page Content */}
         <Content
           style={{
-            margin: "24px 16px",
+            flex: 1,
+            overflowY: "auto",
             padding: 24,
-            minHeight: 280,
-            // background: "var(--color-peach-light)",
+            margin: "0 16px 16px 16px",
+            minHeight: 0,
             borderRadius: borderRadiusLG,
           }}
         >

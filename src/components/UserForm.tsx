@@ -1,13 +1,4 @@
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  Row,
-  Col,
-  message,
-  Collapse,
-} from "antd";
+import { Form, Input, Button, Select, Row, Col, message, Collapse } from "antd";
 import { useState } from "react";
 import { useIsMobile } from "@/hooks/useIsMobile"; // Asegúrate de importar tu hook
 import { createUser } from "@/api/users";
@@ -22,45 +13,58 @@ interface FormValues {
   password: string;
 }
 
-const UserForm = ({ onSuccess }: { onSuccess: (values: FormValues) => void }) => {
+const UserForm = ({
+  onSuccess,
+  setShowUsersTable,
+  showUsersTable,
+  // loading,
+  // setLoading
+}: {
+  onSuccess: (values: FormValues) => void;
+  showUsersTable: boolean,
+  setShowUsersTable: () => void;
+  // setLoading: () => void;
+  // loading: boolean,
+}) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const isMobile = useIsMobile();
 
-const onFinish = async (values: FormValues) => {
-  try {
-    setLoading(true);
-    const jwt = localStorage.getItem("jwt") || "";
-    const response = await createUser(values, jwt);
+  const onFinish = async (values: FormValues) => {
+    try {
+      setLoading(true);
+      const jwt = localStorage.getItem("jwt") || "";
+      const response = await createUser(values, jwt);
 
-    if (response.success) {
-      message.success("User created successfully ✅");
-      form.resetFields();
-      onSuccess?.();
-    } else {
-      message.error(response.error || "Failed to create user");
+      if (response.success) {
+        message.success("User created successfully ✅");
+        form.resetFields();
+        onSuccess?.();
+      } else {
+        message.error(response.error || "Failed to create user");
+      }
+    } catch (error) {
+      message.error("Error creating user");
+      console.error(`❌ ${error} `);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    message.error("Error creating user");
-    console.error(`❌ ${error} `);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  
+  };
 
   const formContent = (
     <Form
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      className="max-w-4xl flex flex-col gap-4"
+      className="max-w-4xl flex flex-col gap-4 m-auto"
     >
       <Row gutter={16}>
         <Col xs={24} sm={12}>
           <Form.Item
-            label="Name"
+            label={
+            <span style={{ color: "var(--color-brown-light)" }}>
+              Name
+            </span>}
             name="name"
             rules={[
               { required: true, message: "Please enter a name" },
@@ -74,7 +78,10 @@ const onFinish = async (values: FormValues) => {
 
         <Col xs={24} sm={12}>
           <Form.Item
-            label="Email"
+            label={
+            <span style={{ color: "var(--color-brown-light)" }}>
+              Email
+            </span>}
             name="email"
             rules={[
               { required: true, message: "Please enter an email" },
@@ -87,7 +94,10 @@ const onFinish = async (values: FormValues) => {
 
         <Col xs={24} sm={12}>
           <Form.Item
-            label="Role"
+            label={
+            <span style={{ color: "var(--color-brown-light)" }}>
+              Role
+            </span>}
             name="role"
             rules={[{ required: true, message: "Please select a role" }]}
           >
@@ -100,7 +110,10 @@ const onFinish = async (values: FormValues) => {
 
         <Col xs={24} sm={12}>
           <Form.Item
-            label="Password"
+            label={
+            <span style={{ color: "var(--color-brown-light)" }}>
+              Password
+            </span>}
             name="password"
             rules={[
               { required: true, message: "Please enter a password" },
@@ -119,7 +132,7 @@ const onFinish = async (values: FormValues) => {
       </Row>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading}>
+        <Button loading={loading} style={{ backgroundColor: "var(--color-orange-dark)" }} type="primary" htmlType="submit" loading={loading}>
           Create User
         </Button>
       </Form.Item>
@@ -127,8 +140,12 @@ const onFinish = async (values: FormValues) => {
   );
 
   return isMobile ? (
-    <Collapse>
-      <Panel header="Register New User" key="1">
+    <Collapse onChange={() => setShowUsersTable(!showUsersTable)}>
+      <Panel
+        
+        header="Register New User"
+        key="1"
+      >
         {formContent}
       </Panel>
     </Collapse>
