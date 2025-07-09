@@ -1,29 +1,28 @@
 import { Form, Input, Typography, message, Card } from "antd";
 import CustomButton from "@/components/CustomButton";
 import axios from "axios";
+import Logo from "@/components/AppLogo";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 const LoginPage = () => {
   const [form] = Form.useForm();
-
-  const onFinish = async (values: any) => {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const onFinish = async (values: { email: string; password: string }) => {
     try {
-      const res = await axios.post(
-        "http://localhost:3000/api/auth/login",
-        values
-      );
-      const token = res.data?.token;
-
-      if (token) {
-        localStorage.setItem("token", token);
-        message.success("Inicio de sesión exitoso 🎉");
-        // window.location.href = "/dashboard";
+      const res = await login(values.email, values.password);
+      if (res) {
+        form.resetFields();
+        message.success("Login successful");
+        navigate("/dashboard");
       } else {
-        message.error("Respuesta inválida del servidor");
+        message.error("Login failed. Please check your credentials.");
       }
     } catch (err: any) {
-      const msg = err?.response?.data?.message || "Error al iniciar sesión";
+      const msg = err?.response?.data?.message || "Error during login";
       message.error(msg);
     }
   };
@@ -32,7 +31,7 @@ const LoginPage = () => {
     <div className="bg-orange-gradient min-h-screen flex flex-col items-center">
       {/* Título arriba */}
       <div className="py-8">
-        <h1 className="text-3xl font-bold text-orangeDark">Ocean Restaurant</h1>
+        <Logo size="6rem" />
       </div>
 
       {/* Formulario centrado en el espacio restante */}
@@ -71,7 +70,7 @@ const LoginPage = () => {
             </Form.Item>
 
             <Form.Item className="text-center">
-              <CustomButton isPrimary={true} label="Log In"  />
+              <CustomButton isPrimary={true} label="Log In" />
             </Form.Item>
           </Form>
         </Card>

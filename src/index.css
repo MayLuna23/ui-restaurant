@@ -11,9 +11,12 @@
   --color-orange-light: #e48e55;
 }
 
-button {
-  /* color: white */
+.sacramento-regular {
+  font-family: "Sacramento", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
+
 
 .primary-button {
   background-color: var(--color-orange-dark);

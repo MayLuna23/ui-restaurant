@@ -1,33 +1,27 @@
 import { API_URL } from "./index";
 import axios from "axios";
 
-type Product = {
-  name: string;
-  price: number;
+type Login = {
+  email: string;
+  password: string;
 };
 
-type FetchProductsResponse = {
+type LoginResponse = {
   success: boolean;
   data?: any;
   error?: string;
   status?: number;
 };
 
-export const fetchProducts = async (jwt: string): Promise<FetchProductsResponse> => {
+export const loginRequest = async (loginData: Login): Promise<LoginResponse> => {
   try {
-    const response = await axios.get(`${API_URL}/products`, {
-      headers: {
-        Authorization: `Bearer ${jwt}`,
-      },
-    });
-
+    const response = await axios.post(`${API_URL}/auth/login`, loginData);
     return {
       success: true,
       data: response.data,
     };
   } catch (error: any) {
-    console.error("Error fetching products:", error);
-
+    console.error("Error during login:", error);
     return {
       success: false,
       error: error.response?.data?.message || "Unknown error",
@@ -36,25 +30,23 @@ export const fetchProducts = async (jwt: string): Promise<FetchProductsResponse>
   }
 };
 
-export const createProduct = async (product: Product, jwt: string): Promise<FetchProductsResponse> => {
+export const verifyAuthReq = async (jwt: string): Promise<LoginResponse> => {
   try {
-    const response = await axios.post(`${API_URL}/products`, product, {
+    const response = await axios.get(`${API_URL}/auth/verify`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
     });
-
     return {
       success: true,
       data: response.data,
     };
   } catch (error: any) {
-    console.error("Error creating product:", error);
-
+    console.error("Error during auth verification:", error);
     return {
       success: false,
       error: error.response?.data?.message || "Unknown error",
       status: error.response?.status || 500,
     };
   }
-};
+}

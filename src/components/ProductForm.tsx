@@ -13,13 +13,12 @@ const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
     try {
       const jwt = localStorage.getItem("jwt") || "";
       const response = await createProduct(values, jwt);
-      console.log(response);
       if (response.success) {
         message.success("Product created successfully ✅");
         form.resetFields();
         onSuccess?.();
       } else {
-        message.error(response.error || "Error creating product ❌");
+        message.error(response.error || "Error creating product");
       }
     } catch (error) {
       message.error("Error creating product");
@@ -37,32 +36,41 @@ const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       className="max-w-md"
     >
       <Form.Item
-        label="Nombre del producto"
+        label="Product Name"
         name="name"
         rules={[
-          { required: true, message: "Por favor escribe un nombre" },
+          { type: "string", required: true, message: "Please write a name" },
           {
-            validator: (_, value) =>
-              typeof value === "string" && value.trim().length > 0
-                ? Promise.resolve()
-                : Promise.reject(
-                    new Error("El nombre no puede estar vacío o en blanco")
-                  ),
+            validator: (_, value) => {
+              if (typeof value !== "string" || value.trim().length === 0) {
+                return Promise.reject(
+                  new Error("The name cannot be empty or blank")
+                );
+              }
+
+              if (/\d/.test(value)) {
+                return Promise.reject(
+                  new Error("The name cannot contain numbers")
+                );
+              }
+
+              return Promise.resolve();
+            },
           },
         ]}
       >
-        <Input placeholder="Ej: Hamburguesa doble" />
+        <Input placeholder="E.g. Classic Burger" />
       </Form.Item>
 
       <Form.Item
-        label="Precio"
+        label="Price"
         name="price"
         rules={[
-          { required: true, message: "Por favor escribe un precio" },
+          { required: true, message: "Please write a price" },
           {
             type: "number",
-            min: 0.01,
-            message: "El precio debe ser mayor a 0",
+            min: 1,
+            message: "The price must be greater than 0",
           },
         ]}
       >
@@ -79,7 +87,7 @@ const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
 
       <Form.Item>
         <Button type="primary" htmlType="submit" loading={loading}>
-          Crear producto
+          Create
         </Button>
       </Form.Item>
     </Form>

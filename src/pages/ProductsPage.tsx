@@ -14,7 +14,7 @@ interface Product {
 
 const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [errorMssg, setErrorMssg] = useState("");
 
   const getProducts = async () => {
@@ -43,7 +43,6 @@ const ProductsPage = () => {
       <ProductForm onSuccess={getProducts} />
 
       <div className="mt-10">
-        <h3 className="text-lg font-semibold mb-4">Lista de productos</h3>
         <ProductList products={products} loading={loading} error={errorMssg} />
       </div>
     </div>

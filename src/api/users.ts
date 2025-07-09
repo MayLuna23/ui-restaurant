@@ -1,21 +1,23 @@
 import { API_URL } from "./index";
 import axios from "axios";
 
-type Product = {
+type User = {
   name: string;
-  price: number;
+  email: string;
+  role: string;
+  password: string;
 };
 
-type FetchProductsResponse = {
+type FetchUsersResponse = {
   success: boolean;
   data?: any;
   error?: string;
   status?: number;
 };
 
-export const fetchProducts = async (jwt: string): Promise<FetchProductsResponse> => {
+export const fetchUsers = async (jwt: string): Promise<FetchUsersResponse> => {
   try {
-    const response = await axios.get(`${API_URL}/products`, {
+    const response = await axios.get(`${API_URL}/users`, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -26,7 +28,7 @@ export const fetchProducts = async (jwt: string): Promise<FetchProductsResponse>
       data: response.data,
     };
   } catch (error: any) {
-    console.error("Error fetching products:", error);
+    console.error("Error fetching users:", error);
 
     return {
       success: false,
@@ -36,9 +38,9 @@ export const fetchProducts = async (jwt: string): Promise<FetchProductsResponse>
   }
 };
 
-export const createProduct = async (product: Product, jwt: string): Promise<FetchProductsResponse> => {
+export const createUser = async (user: User, jwt: string): Promise<FetchUsersResponse> => {
   try {
-    const response = await axios.post(`${API_URL}/products`, product, {
+    const response = await axios.post(`${API_URL}/users`, user, {
       headers: {
         Authorization: `Bearer ${jwt}`,
       },
@@ -49,7 +51,7 @@ export const createProduct = async (product: Product, jwt: string): Promise<Fetc
       data: response.data,
     };
   } catch (error: any) {
-    console.error("Error creating product:", error);
+    console.error("Error creating user:", error);
 
     return {
       success: false,
@@ -57,4 +59,4 @@ export const createProduct = async (product: Product, jwt: string): Promise<Fetc
       status: error.response?.status || 500,
     };
   }
-};
+}

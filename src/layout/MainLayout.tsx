@@ -1,36 +1,35 @@
 import React, { useState } from "react";
 import {
   FileTextOutlined,
-  LogoutOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   PieChartOutlined,
   ShoppingOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import { Link, Outlet } from "react-router-dom";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import Logo from "@/components/AppLogo";
 
 const { Header, Sider, Content } = Layout;
 
 const MainLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(true);
   const {
-    token: {  borderRadiusLG },
+    token: { borderRadiusLG },
   } = theme.useToken();
   const [isMobile, setIsMobile] = useState(false);
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider
-        style={{ backgroundColor: "var(--color-orange-dark)" }}
+        style={{ backgroundColor: "var(--color-orange-dark)"}}
         trigger={null}
         collapsible
         collapsed={collapsed}
         collapsedWidth={isMobile ? 0 : 80}
         breakpoint="md"
-        onBreakpoint={(broken) => setIsMobile(broken)} 
+        onBreakpoint={(broken) => setIsMobile(broken)}
       >
         <div
           className="demo-logo-vertical"
@@ -73,8 +72,13 @@ const MainLayout: React.FC = () => {
               label: <Link to="/dashboard">Dashboard</Link>,
             },
             {
+              key: "/users",
+              icon: <PersonAddAltIcon style={{ fontSize: "1.5rem" }} />,
+              label: <Link to="/users">Add User</Link>,
+            },
+            {
               key: "/logout",
-              icon: <LogoutOutlined style={{ fontSize: "1.4rem" }} />,
+              icon: <LogoutIcon style={{ fontSize: "1.6rem" }} />,
               label: <Link to="/dashboard">Log Out</Link>,
             },
           ]}
@@ -82,9 +86,10 @@ const MainLayout: React.FC = () => {
       </Sider>
       <Layout className="bg-orange-gradient">
         <Header
-          className="bg-orange-gradient"
+          className="bg-orange-gradient relative flex items-center justify-center"
           style={{ padding: 0, height: 100 }}
         >
+          {/* Botón fijo a la izquierda */}
           <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -93,9 +98,18 @@ const MainLayout: React.FC = () => {
               fontSize: "16px",
               width: 64,
               height: 100,
+              position: "absolute",
+              left: 0,
+              top: 0,
             }}
           />
+
+          {/* Logo centrado */}
+          <div className="flex items-center justify-center">
+            <Logo />
+          </div>
         </Header>
+
         <Content
           style={{
             margin: "24px 16px",
