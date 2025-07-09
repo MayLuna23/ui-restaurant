@@ -6,6 +6,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   loading: boolean;
+  userName: string;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
@@ -14,6 +15,7 @@ const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   isAdmin: false,
   loading: true,
+  userName: "",
   login: async () => false,
   logout: () => {},
 });
@@ -93,7 +95,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, isAdmin, loading, login, logout }}
+      value={{ isAuthenticated, isAdmin, loading, login, logout, userName }}
     >
       {children}
     </AuthContext.Provider>

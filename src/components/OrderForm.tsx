@@ -1,13 +1,9 @@
-import {
-  Form,
-  Select,
-  InputNumber,
-  Button,
-  Typography,
-} from "antd";
+import { Form, Select, InputNumber, Button, Typography } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { CustomNotification } from "./Notification";
+import { createOrder } from "@/api/orders";
+import { fetchProductsReq } from "@/api/products";
 
 const { Option } = Select;
 const { Title } = Typography;
@@ -28,28 +24,13 @@ const OrderForm = () => {
   const [items, setItems] = useState<ProductItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+const [form] = Form.useForm();
 
   const fetchProducts = async () => {
     try {
-      // const res = await axios.get('http://localhost:3000/api/products');
-      // setProducts(res.data);
-      setProducts([
-        { productId: 1, name: "Hamburguesa Mar y Tierra", price: 10000 },
-        { productId: 2, name: "Producto B", price: 20000 },
-        { productId: 3, name: "Producto C", price: 30000 },
-        { productId: 4, name: "Producto D", price: 40000 },
-        { productId: 5, name: "Producto E", price: 50000 },
-        { productId: 6, name: "Producto F", price: 60000 },
-        { productId: 7, name: "Producto G", price: 70000 },
-        { productId: 8, name: "Producto H", price: 80000 },
-        { productId: 9, name: "Producto I", price: 90000 },
-        { productId: 10, name: "Producto J", price: 100000 },
-        { productId: 11, name: "Producto K", price: 110000 },
-        { productId: 12, name: "Producto L", price: 120000 },
-        { productId: 13, name: "Producto M", price: 130000 },
-        { productId: 14, name: "Producto N", price: 140000 },
-        { productId: 15, name: "Producto O", price: 150000 },
-      ]);
+      const jwt = localStorage.getItem("jwt") || "";
+      const res = await fetchProductsReq(jwt);
+      setProducts(res.data.data);
     } catch (err) {
       CustomNotification({
         type: "error",
@@ -57,17 +38,6 @@ const OrderForm = () => {
       });
     }
   };
-
-  useEffect(() => {
-    const selectedProducts = items.map((item) => {
-      const product = products.find((p) => p.productId === item.productId);
-      return {
-        ...product,
-        quantity: item.quantity,
-      };
-    });
-    console.log("🧾 Productos seleccionados:", selectedProducts);
-  }, [items, products]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -117,16 +87,17 @@ const OrderForm = () => {
 
     setLoading(true);
     try {
-      // await axios.post("http://localhost:3000/api/orders", {
-      //   items,
-      //   total,
-      // });
+      const jwt = localStorage.getItem("jwt") || "";
+      console.log(items);
+      const response = await createOrder({ items: items }, jwt);
+      console.log(response);
       CustomNotification({
         type: "success",
         message: "Orden creada exitosamente",
         description: "Tu orden fue registrada correctamente.",
       });
       setItems([]);
+      form.resetFields();
     } catch (err) {
       CustomNotification({
         type: "error",
@@ -147,20 +118,33 @@ const OrderForm = () => {
     >
       <main className="flex flex-row gap-2">
         {/* Columna izquierda */}
-        <section className="md:w-2/3 w-full pr-4 min-h-[75vh] rounded-2xl p-5"  style={{ backgroundColor: "var(--color-peach-lighter)" }}>
+        <section
+          className="md:w-2/3 w-full pr-4 min-h-[75vh] rounded-2xl p-5"
+          style={{ backgroundColor: "var(--color-peach-lighter)" }}
+        >
+            <Title level={3} className="mb-4">
+              Create Order
+            </Title>
           <Form
+            form={form}
             layout="vertical"
             onFinish={handleSubmit}
             className="h-full flex flex-col justify-between"
           >
-            <Form.Item label="Selecciona productos">
+            <Form.Item label="" name="products">
               <Select
                 mode="multiple"
-                placeholder="Elige productos"
+                placeholder="Products"
                 onChange={handleSelect}
                 value={items.map((item) => item.productId)}
-                tagRender={isMobile ? () => null : undefined}
-              
+                maxTagCount={isMobile ? 0 : undefined} // oculta los tags en mobile pero mantiene el input funcional
+                showSearch
+                filterOption={(input, option) =>
+                  option?.children
+                    ?.toString()
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               >
                 {products.map((product) => (
                   <Option key={product.productId} value={product.productId}>
@@ -174,8 +158,8 @@ const OrderForm = () => {
               <Title level={4}>Total: ${total.toLocaleString("es-CO")}</Title>
 
               <Form.Item>
-                <Button type="primary" htmlType="submit" loading={loading}>
-                  Crear orden
+                <Button style={{marginBottom: "12px"}} type="primary" htmlType="submit" loading={loading}>
+                  Create
                 </Button>
               </Form.Item>
             </div>
@@ -183,7 +167,13 @@ const OrderForm = () => {
         </section>
 
         {/* Columna derecha con scroll */}
-        <section className="md:w-1/3 w-full pl-4 overflow-y-auto max-h-[75vh] rounded-2xl p-5" style={{backgroundColor: "var(--color-peach-lighter)" }}>
+        <section
+          className="md:w-1/3 w-full pl-4 overflow-y-auto max-h-[75vh] rounded-2xl p-5"
+          style={{ backgroundColor: "var(--color-peach-lighter)" }}
+        >
+          <Title level={4} className="mb-4">
+            Order Items - Select Quantity
+          </Title>
           {items.map((item) => {
             const product = products.find(
               (p) => p.productId === item.productId
@@ -191,7 +181,9 @@ const OrderForm = () => {
             return (
               <Form.Item
                 key={item.productId}
-                label={`Cantidad de ${product?.name} - $ ${product?.price.toLocaleString("es-CO")}`}
+                label={`${product?.name} - $ ${product?.price.toLocaleString(
+                  "es-CO"
+                )}`}
                 labelCol={{ span: 24 }}
               >
                 <InputNumber

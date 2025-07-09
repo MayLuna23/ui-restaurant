@@ -7,23 +7,35 @@ import {
   ShoppingOutlined,
 } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import LogoutIcon from "@mui/icons-material/Logout";
-import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
 import Logo from "@/components/AppLogo";
+import { useAuth } from "@/context/AuthContext";
+import PersonAddAltIcon from "@mui/icons-material/PersonAddAlt";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { Tooltip } from "antd";
 
 const { Header, Sider, Content } = Layout;
 
 const MainLayout: React.FC = () => {
+  const navigate = useNavigate();
+  const { isAdmin, logout, userName } = useAuth();
   const [collapsed, setCollapsed] = useState(true);
   const {
     token: { borderRadiusLG },
   } = theme.useToken();
   const [isMobile, setIsMobile] = useState(false);
+
+  const formatUserName = (name: string) => {
+  const firstWord = name.split(" ")[0];
+  return firstWord.charAt(0).toUpperCase() + firstWord.slice(1).toLowerCase();
+};
+
+  
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider
-        style={{ backgroundColor: "var(--color-orange-dark)"}}
+        style={{ backgroundColor: "var(--color-orange-dark)" }}
         trigger={null}
         collapsible
         collapsed={collapsed}
@@ -45,9 +57,22 @@ const MainLayout: React.FC = () => {
             fontWeight: "bold",
             fontSize: 18,
             transition: "all 0.3s ease",
+            cursor: "pointer",
           }}
         >
-          {collapsed ? "🍔" : "Ocean Restaurant"}
+          {collapsed ? (
+            <Tooltip
+              title={`${formatUserName(userName)} (${isAdmin ? "Admin" : "Waiter"})`}
+              placement="right"
+            >
+              <AccountCircleIcon />
+            </Tooltip>
+          ) : (
+            <div className="flex flex-col items-center gap-2">
+              <span>{formatUserName(userName)}</span>
+              <span>{isAdmin ? "Admin" : "Waiter"}</span>
+            </div>
+          )}
         </div>
 
         <Menu
@@ -55,31 +80,41 @@ const MainLayout: React.FC = () => {
           style={{ backgroundColor: "var(--color-orange-dark)" }}
           mode="inline"
           defaultSelectedKeys={["1"]}
+          onClick={({ key }) => {
+            if (key === "logout") {
+              logout();
+              navigate("/login");
+            }
+          }}
           items={[
-            {
-              key: "/productos",
-              icon: <ShoppingOutlined style={{ fontSize: "1.4rem" }} />,
-              label: <Link to="/products">Productos</Link>,
-            },
-            {
-              key: "/ordenes",
-              icon: <FileTextOutlined style={{ fontSize: "1.4rem" }} />,
-              label: <Link to="/orders">Create Order</Link>,
-            },
             {
               key: "/dashboard",
               icon: <PieChartOutlined style={{ fontSize: "1.4rem" }} />,
               label: <Link to="/dashboard">Dashboard</Link>,
             },
             {
-              key: "/users",
-              icon: <PersonAddAltIcon style={{ fontSize: "1.5rem" }} />,
-              label: <Link to="/users">Add User</Link>,
+              key: "/orders",
+              icon: <FileTextOutlined style={{ fontSize: "1.4rem" }} />,
+              label: <Link to="/orders">Create Order</Link>,
             },
             {
-              key: "/logout",
+              key: "/products",
+              icon: <ShoppingOutlined style={{ fontSize: "1.4rem" }} />,
+              label: <Link to="/products">Products</Link>,
+            },
+            ...(isAdmin
+              ? [
+                  {
+                    key: "/users",
+                    icon: <PersonAddAltIcon style={{ fontSize: "1.5rem" }} />,
+                    label: <Link to="/users">Add User</Link>,
+                  },
+                ]
+              : []),
+            {
+              key: "logout",
               icon: <LogoutIcon style={{ fontSize: "1.6rem" }} />,
-              label: <Link to="/dashboard">Log Out</Link>,
+              label: "Log Out",
             },
           ]}
         />

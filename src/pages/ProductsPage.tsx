@@ -1,9 +1,8 @@
-// src/pages/ProductsPage.tsx
-
 import { useEffect, useState } from "react";
 import ProductForm from "../components/ProductForm";
 import ProductList from "../components/ProductList";
-import { fetchProducts } from "@/api/products";
+import { fetchProductsReq } from "@/api/products";
+import { useAuth } from "@/context/AuthContext";
 
 interface Product {
   productId: number;
@@ -16,12 +15,12 @@ const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMssg, setErrorMssg] = useState("");
-
+  const { isAdmin } = useAuth();
   const getProducts = async () => {
     setLoading(true);
     try {
       const jwt = localStorage.getItem("jwt") || "";
-      const res = await fetchProducts(jwt);
+      const res = await fetchProductsReq(jwt);
 
       res.success ? setProducts(res.data?.data || []) : setProducts([]);
     } catch (err) {
@@ -38,9 +37,9 @@ const ProductsPage = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Productos 🍔</h2>
+      <h2 className="text-2xl font-semibold mb-6">Products</h2>
 
-      <ProductForm onSuccess={getProducts} />
+      {isAdmin && <ProductForm onSuccess={getProducts} />}
 
       <div className="mt-10">
         <ProductList products={products} loading={loading} error={errorMssg} />

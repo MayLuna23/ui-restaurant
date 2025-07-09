@@ -13,7 +13,7 @@ type FetchProductsResponse = {
   status?: number;
 };
 
-export const fetchProducts = async (jwt: string): Promise<FetchProductsResponse> => {
+export const fetchProductsReq = async (jwt: string): Promise<FetchProductsResponse> => {
   try {
     const response = await axios.get(`${API_URL}/products`, {
       headers: {
