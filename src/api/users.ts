@@ -1,3 +1,4 @@
+import type { ApiResponse } from "@/types";
 import { API_URL } from "./index";
 import axios from "axios";
 
@@ -8,14 +9,8 @@ type User = {
   password: string;
 };
 
-type FetchUsersResponse = {
-  success: boolean;
-  data?: any;
-  error?: string;
-  status?: number;
-};
 
-export const fetchUsersReq = async (jwt: string): Promise<FetchUsersResponse> => {
+export const fetchUsersReq = async (jwt: string): Promise<ApiResponse> => {
   try {
     const response = await axios.get(`${API_URL}/users`, {
       headers: {
@@ -38,7 +33,7 @@ export const fetchUsersReq = async (jwt: string): Promise<FetchUsersResponse> =>
   }
 };
 
-export const createUser = async (user: User, jwt: string): Promise<FetchUsersResponse> => {
+export const createUser = async (user: User, jwt: string): Promise<ApiResponse> => {
   try {
     const response = await axios.post(`${API_URL}/users`, user, {
       headers: {

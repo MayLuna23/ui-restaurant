@@ -1,7 +1,7 @@
 import React from "react";
 
 interface LogoProps {
-  size?: string; // e.g. "32px", "5rem", "lg"
+  size?: string;
 }
 
 const Logo: React.FC<LogoProps> = ({ size = "4rem" }) => {

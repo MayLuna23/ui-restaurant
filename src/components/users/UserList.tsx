@@ -1,15 +1,7 @@
-// src/components/UserList.tsx
-
 import { useIsMobile } from "@/hooks/useIsMobile";
+import type { User } from "@/types";
 import { Table } from "antd";
 
-interface User {
-  userId: number;
-  name: string;
-  email: string;
-  role: string;
-  createdAt: string;
-}
 
 const UserList = ({
   users,
@@ -20,9 +12,8 @@ const UserList = ({
   loading: boolean;
   error: string;
 }) => {
-
   const isMobile = useIsMobile();
-  
+
   return (
     <>
       {error && <div className="text-red-500 text-center mb-4">{error}</div>}

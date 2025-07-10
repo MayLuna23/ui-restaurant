@@ -1,21 +1,14 @@
-export interface Product {
-  productId: number;
+export type ApiResponse = {
+  success: boolean;
+  data?: any;
+  error?: string;
+  status?: number;
+};
+
+export type User = {
+  userId: number;
   name: string;
-  price: number;
+  email: string;
+  role: string;
   createdAt: string;
-}
-
-export interface OrderItem {
-  productId: number;
-  quantity: number;
-}
-
-export interface Order {
-  orderId: number;
-  total: number;
-  createdAt: string;
-  orderItems: {
-    product: Product;
-    quantity: number;
-  }[];
-}
+};

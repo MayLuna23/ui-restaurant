@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import ProductForm from "../components/ProductForm";
-import ProductList from "../components/ProductList";
+import ProductForm from "../components/products/ProductForm";
+import ProductList from "../components/products/ProductList";
 import { fetchProductsReq } from "@/api/products";
 import { useAuth } from "@/context/AuthContext";
-import { useIsMobile } from "@/hooks/useIsMobile";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
 
 interface Product {
@@ -15,7 +14,6 @@ interface Product {
 
 const ProductsPage = () => {
   useDocumentTitle("Products | Ocean App");
-  const isMobile = useIsMobile();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMssg, setErrorMssg] = useState("");

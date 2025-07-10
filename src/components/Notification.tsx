@@ -7,7 +7,7 @@ interface NotifyProps {
   message: string;
   description?: string;
   placement?: "topLeft" | "topRight" | "bottomLeft" | "bottomRight";
-  duration?: number; // en segundos
+  duration?: number;
 }
 
 export const CustomNotification = ({

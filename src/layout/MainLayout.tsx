@@ -84,7 +84,9 @@ const MainLayout: React.FC = () => {
         >
           {collapsed ? (
             <Tooltip
-              title={`${formatUserName(userName)} (${isAdmin ? "Admin" : "Waiter"})`}
+              title={`${formatUserName(userName)} (${
+                isAdmin ? "Admin" : "Waiter"
+              })`}
               placement="right"
             >
               <AccountCircleIcon />

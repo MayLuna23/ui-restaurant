@@ -1,6 +1,6 @@
 import { Form, Input, Button, Select, Row, Col, message, Collapse } from "antd";
 import { useState } from "react";
-import { useIsMobile } from "@/hooks/useIsMobile"; // Asegúrate de importar tu hook
+import { useIsMobile } from "@/hooks/useIsMobile";
 import { createUser } from "@/api/users";
 
 const { Option } = Select;
@@ -17,14 +17,10 @@ const UserForm = ({
   onSuccess,
   setShowUsersTable,
   showUsersTable,
-  // loading,
-  // setLoading
 }: {
-  onSuccess: (values: FormValues) => void;
+  onSuccess: () => void;
   showUsersTable: boolean,
-  setShowUsersTable: () => void;
-  // setLoading: () => void;
-  // loading: boolean,
+  setShowUsersTable: (value: boolean) => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
@@ -132,7 +128,7 @@ const UserForm = ({
       </Row>
 
       <Form.Item>
-        <Button loading={loading} style={{ backgroundColor: "var(--color-orange-dark)" }} type="primary" htmlType="submit" loading={loading}>
+        <Button loading={loading} style={{ backgroundColor: "var(--color-orange-dark)" }} type="primary" htmlType="submit" >
           Create User
         </Button>
       </Form.Item>

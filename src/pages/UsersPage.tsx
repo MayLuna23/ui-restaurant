@@ -1,18 +1,9 @@
-// src/pages/UsersPage.tsx
-
 import { useEffect, useState } from "react";
-import UserForm from "@/components/UserForm";
-// import UserList from "../components/UserList";
+import UserForm from "@/components/users/UserForm";
 import { fetchUsersReq } from "@/api/users";
-import UserList from "@/components/UserList";
+import UserList from "@/components/users/UserList";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
-
-type User = {
-  name: string;
-  email: string;
-  role: string;
-  password: string;
-};
+import type { User } from "@/types";
 
 const UsersPage = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -20,6 +11,7 @@ const UsersPage = () => {
   const [errorMssg, setErrorMssg] = useState("");
   const [showUsersTable, setShowUsersTable] = useState(true);
   useDocumentTitle("Users | Ocean App");
+  
   const getUsers = async () => {
     setLoading(true);
     try {
@@ -46,8 +38,6 @@ const UsersPage = () => {
       </h2>
       <UserForm
         onSuccess={getUsers}
-        setLoading={setLoading}
-        loading={loading}
         setShowUsersTable={setShowUsersTable}
         showUsersTable={showUsersTable}
       />

@@ -3,7 +3,6 @@
 import { Form, Input, InputNumber, Button, message } from "antd";
 import { useState } from "react";
 import { createProduct } from "@/api/products";
-import { useIsMobile } from "@/hooks/useIsMobile";
 
 const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [loading, setLoading] = useState(false);
@@ -35,14 +34,14 @@ const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       layout="vertical"
       onFinish={onFinish}
       className="max-w-md"
-      style={{ width: "90vw"}}
+      style={{ width: "90vw" }}
     >
       <Form.Item
-      // style={{color: "var(--color-brown-light)"}}
         label={
-            <span style={{ color: "var(--color-brown-light)" }}>
-              Product Name
-            </span>}
+          <span style={{ color: "var(--color-brown-light)" }}>
+            Product Name
+          </span>
+        }
         name="name"
         rules={[
           { type: "string", required: true, message: "Please write a name" },
@@ -69,10 +68,7 @@ const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       </Form.Item>
 
       <Form.Item
-        label={
-            <span style={{ color: "var(--color-brown-light)" }}>
-              Price
-            </span>}
+        label={<span style={{ color: "var(--color-brown-light)" }}>Price</span>}
         name="price"
         rules={[
           { required: true, message: "Please write a price" },
@@ -95,7 +91,12 @@ const ProductForm = ({ onSuccess }: { onSuccess?: () => void }) => {
       </Form.Item>
 
       <Form.Item>
-        <Button style={{ backgroundColor: "var(--color-orange-dark)" }} type="primary" htmlType="submit" loading={loading}>
+        <Button
+          style={{ backgroundColor: "var(--color-orange-dark)" }}
+          type="primary"
+          htmlType="submit"
+          loading={loading}
+        >
           Create
         </Button>
       </Form.Item>

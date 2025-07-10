@@ -6,9 +6,9 @@ import ProductsPage from "./pages/ProductsPage";
 import OrdersPage from "./pages/OrdersPage";
 import DashboardPage from "./pages/DashboardPage";
 import LoginPage from "./pages/LoginPage";
-import PrivateRoute from "./components/PrivateRoute";
+import PrivateRoute from "./components/routes/PrivateRoute";
 import UsersPage from "./pages/UsersPage";
-import AdminRoute from "./components/AdminRoute";
+import AdminRoute from "./components/routes/AdminRoute";
 import { AuthProvider } from "./context/AuthContext";
 
 function App() {

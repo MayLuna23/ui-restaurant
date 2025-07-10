@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
 import { loginRequest, verifyAuthReq } from "@/api/auth";
 
 interface AuthContextType {
@@ -26,12 +25,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState("");
 
-  // Token helpers
   const setToken = (token: string) => localStorage.setItem("jwt", token);
   const getToken = () => localStorage.getItem("jwt");
   const removeToken = () => localStorage.removeItem("jwt");
 
-  // ✅ Se ejecuta una sola vez al montar la app
   const verifyAuth = async () => {
     const jwt = getToken();
     if (!jwt) {
@@ -44,7 +41,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       const res = await verifyAuthReq(jwt);
-
       const { name, role } = res.data;
       setIsAuthenticated(true);
       setIsAdmin(role === "admin");
@@ -59,7 +55,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // ✅ Se usa en el login, directamente cambia el estado
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const res = await loginRequest({ email, password });

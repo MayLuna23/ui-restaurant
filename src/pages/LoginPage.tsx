@@ -1,6 +1,5 @@
 import { Form, Input, Typography, message, Card } from "antd";
 import CustomButton from "@/components/CustomButton";
-import axios from "axios";
 import Logo from "@/components/AppLogo";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -32,12 +31,10 @@ const LoginPage = () => {
 
   return (
     <div className="bg-orange-gradient min-h-screen flex flex-col items-center">
-      {/* Título arriba */}
       <div className="py-8 pt-24">
         <Logo size="6rem" />
       </div>
 
-      {/* Formulario centrado en el espacio restante */}
       <div className="flex-1 flex  justify-center w-full px-4 pt-12">
         <Card className="w-full max-w-md border-0 rounded-xl bg-transparent">
           <Title

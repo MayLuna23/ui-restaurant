@@ -1,3 +1,4 @@
+import type { ApiResponse } from "@/types";
 import { API_URL } from "./index";
 import axios from "axios";
 
@@ -6,14 +7,7 @@ type Login = {
   password: string;
 };
 
-type LoginResponse = {
-  success: boolean;
-  data?: any;
-  error?: string;
-  status?: number;
-};
-
-export const loginRequest = async (loginData: Login): Promise<LoginResponse> => {
+export const loginRequest = async (loginData: Login): Promise<ApiResponse> => {
   try {
     const response = await axios.post(`${API_URL}/auth/login`, loginData);
     return {
@@ -30,7 +24,7 @@ export const loginRequest = async (loginData: Login): Promise<LoginResponse> => 
   }
 };
 
-export const verifyAuthReq = async (jwt: string): Promise<LoginResponse> => {
+export const verifyAuthReq = async (jwt: string): Promise<ApiResponse> => {
   try {
     const response = await axios.get(`${API_URL}/auth/verify`, {
       headers: {

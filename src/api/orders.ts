@@ -1,17 +1,11 @@
+import type { ApiResponse } from "@/types";
 import { API_URL } from "./index";
 import axios from "axios";
-
-type FetchOrdersResponse = {
-  success: boolean;
-  data?: any;
-  error?: string;
-  status?: number;
-};
 
 export const fetchOrdersReq = async (
   jwt: string,
   isAdmin: boolean
-): Promise<FetchOrdersResponse> => {
+): Promise<ApiResponse> => {
   try {
     let response;
     if (isAdmin) {
@@ -45,7 +39,7 @@ export const fetchOrdersReq = async (
 export const createOrder = async (
   order: any,
   jwt: string
-): Promise<FetchOrdersResponse> => {
+): Promise<ApiResponse> => {
   try {
     const response = await axios.post(`${API_URL}/orders`, order, {
       headers: {
@@ -66,7 +60,7 @@ export const createOrder = async (
   }
 };
 
-export const deleteOrder = async (orderId: number, jwt: string): Promise<FetchOrdersResponse> => {
+export const deleteOrder = async (orderId: number, jwt: string): Promise<ApiResponse> => {
   try {
     const response = await axios.delete(`${API_URL}/orders/${orderId}`, {
       headers: {
@@ -90,7 +84,7 @@ export const deleteOrder = async (orderId: number, jwt: string): Promise<FetchOr
 export const filterOrdersReq = async (
   filters: any,
   jwt: string
-): Promise<FetchOrdersResponse> => {
+): Promise<ApiResponse> => {
   try {
     console.log(filters)
     const response = await axios.post(`${API_URL}/orders/filter`, filters, {

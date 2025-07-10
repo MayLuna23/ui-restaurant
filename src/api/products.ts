@@ -1,3 +1,4 @@
+import type { ApiResponse } from "@/types";
 import { API_URL } from "./index";
 import axios from "axios";
 
@@ -6,14 +7,7 @@ type Product = {
   price: number;
 };
 
-type FetchProductsResponse = {
-  success: boolean;
-  data?: any;
-  error?: string;
-  status?: number;
-};
-
-export const fetchProductsReq = async (jwt: string): Promise<FetchProductsResponse> => {
+export const fetchProductsReq = async (jwt: string): Promise<ApiResponse> => {
   try {
     const response = await axios.get(`${API_URL}/products`, {
       headers: {
@@ -36,7 +30,7 @@ export const fetchProductsReq = async (jwt: string): Promise<FetchProductsRespon
   }
 };
 
-export const createProduct = async (product: Product, jwt: string): Promise<FetchProductsResponse> => {
+export const createProduct = async (product: Product, jwt: string): Promise<ApiResponse> => {
   try {
     const response = await axios.post(`${API_URL}/products`, product, {
       headers: {

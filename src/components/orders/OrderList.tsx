@@ -1,6 +1,3 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { DeleteOutlined } from "@ant-design/icons";
 import {
   Modal,
   Tooltip,
@@ -10,11 +7,13 @@ import {
   Form,
   Space,
   message,
-  Input,
   Select,
 } from "antd";
+import type { SelectProps } from "antd";
+import { useEffect, useState } from "react";
+import { DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { CustomNotification } from "./Notification";
+import { CustomNotification } from "../Notification";
 import { useAuth } from "@/context/AuthContext";
 import { deleteOrder, fetchOrdersReq, filterOrdersReq } from "@/api/orders";
 import { fetchUsersReq } from "@/api/users";
@@ -37,11 +36,16 @@ interface Order {
   }[];
 }
 
+interface User {
+  userId: number;
+  name: string;
+}
+
 const OrderList = () => {
   const isMobile = useIsMobile();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [form] = Form.useForm();
   const { isAdmin, userName } = useAuth();
 
@@ -78,7 +82,7 @@ const OrderList = () => {
     if (endDate) payload.endDate = dayjs(endDate).format("YYYY-MM-DD");
     if (bodyUserId) payload.bodyUserId = bodyUserId;
 
-    // 🔴 Validaciones
+    // 🔴 Validations
     if (
       (payload.minTotal && !payload.maxTotal) ||
       (!payload.minTotal && payload.maxTotal)
@@ -127,47 +131,46 @@ const OrderList = () => {
     }
   };
 
-const handleDelete = (orderId: number, total: number, date: string) => {
-  const jwt = localStorage.getItem("jwt") || "";
-  Modal.confirm({
-    title: "Are you sure you want to delete this order?",
-    content: (
-      <div>
-        <span className="font-bold">Total:</span> $
-        {total.toLocaleString("en-US")}{" "}
-        <span className="font-bold">Date:</span>{" "}
-        {new Date(date).toLocaleString("en-US", {
-          dateStyle: "medium",
-          timeStyle: "short",
-        })}
-      </div>
-    ),
-    okText: "Delete",
-    cancelText: "Cancel",
-    okType: "danger",
-    centered: true,
-    onOk: async () => {
-      try {
-        const req = await deleteOrder(orderId, jwt);
-        if (req.success) {
-          CustomNotification({
-            type: "success",
-            message: "Order deleted successfully",
-          });
-          fetchOrders(); // Refresh the list of orders
-        } else {
-          CustomNotification({
-            type: "error",
-            message: req.error || "Error deleting order",
-          });
+  const handleDelete = (orderId: number, total: number, date: string) => {
+    const jwt = localStorage.getItem("jwt") || "";
+    Modal.confirm({
+      title: "Are you sure you want to delete this order?",
+      content: (
+        <div>
+          <span className="font-bold">Total:</span> $
+          {total.toLocaleString("en-US")}{" "}
+          <span className="font-bold">Date:</span>{" "}
+          {new Date(date).toLocaleString("en-US", {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}
+        </div>
+      ),
+      okText: "Delete",
+      cancelText: "Cancel",
+      okType: "danger",
+      centered: true,
+      onOk: async () => {
+        try {
+          const req = await deleteOrder(orderId, jwt);
+          if (req.success) {
+            CustomNotification({
+              type: "success",
+              message: "Order deleted successfully",
+            });
+            fetchOrders();
+          } else {
+            CustomNotification({
+              type: "error",
+              message: req.error || "Error deleting order",
+            });
+          }
+        } catch (err) {
+          console.error("Error deleting order", err);
         }
-      } catch (err) {
-        console.error("Error deleting order", err);
-      }
-    },
-  });
-};
-
+      },
+    });
+  };
 
   useEffect(() => {
     fetchOrders();
@@ -175,7 +178,7 @@ const handleDelete = (orderId: number, total: number, date: string) => {
 
   return (
     <div className="">
-      {/* Filtros */}
+      {/* Filters */}
       <Form
         form={form}
         layout="inline"
@@ -218,21 +221,19 @@ const handleDelete = (orderId: number, total: number, date: string) => {
         </Form.Item>
 
         {isAdmin && (
-          <Form.Item           label={
-            <span style={{ color: "var(--color-brown-light)" }}>
-              User
-            </span>
-          } name="bodyUserId">
-            
+          <Form.Item
+            label={
+              <span style={{ color: "var(--color-brown-light)" }}>User</span>
+            }
+            name="bodyUserId"
+          >
             <Select
-            style={{width: "150px"}}
-              name="user"
+              style={{ width: "150px" }}
               placeholder="Users"
               // onChange={handleSelect}
               showSearch
-              filterOption={(input, option) =>
-                option?.children
-                  ?.toString()
+              filterOption={(input: string, option?: React.ReactElement) =>
+                String(option?.children)
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
@@ -246,15 +247,30 @@ const handleDelete = (orderId: number, total: number, date: string) => {
           </Form.Item>
         )}
 
-        <div style={{marginTop: isMobile ? "10px" : ""}} className="flex flex-row gap-2">
+        <div
+          style={{ marginTop: isMobile ? "10px" : "" }}
+          className="flex flex-row gap-2"
+        >
           <Form.Item>
-            <Button style={{backgroundColor: "var(--color-orange-dark)", fontWeight: "bold" }} className="w-22" type="primary" onClick={filterOrders}>
+            <Button
+              style={{
+                backgroundColor: "var(--color-orange-dark)",
+                fontWeight: "bold",
+              }}
+              className="w-22"
+              type="primary"
+              onClick={filterOrders}
+            >
               Filter
             </Button>
           </Form.Item>
 
           <Form.Item>
-            <Button style={{ fontWeight: "bold", color: "var(--color-orange-dark"}} className="w-22" onClick={fetchOrders}>
+            <Button
+              style={{ fontWeight: "bold", color: "var(--color-orange-dark" }}
+              className="w-22"
+              onClick={fetchOrders}
+            >
               Clear
             </Button>
           </Form.Item>
@@ -263,7 +279,9 @@ const handleDelete = (orderId: number, total: number, date: string) => {
 
       <div className="text-center mb-8">
         {isAdmin ? (
-          <span style={{ color: "var(--color-brown-light)" }}>Here you can view and filter all users' orders.</span>
+          <span style={{ color: "var(--color-brown-light)" }}>
+            Here you can view and filter all users' orders.
+          </span>
         ) : (
           <span style={{ color: "var(--color-brown-light)" }}>
             {userName}, Here you can see and filter all orders in your name.

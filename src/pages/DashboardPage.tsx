@@ -1,5 +1,5 @@
 import useDocumentTitle from '@/hooks/useDocumentTitle';
-import OrderList from '../components/OrderList';
+import OrderList from '../components/orders/OrderList';
 
 const DashboardPage = () => {
 

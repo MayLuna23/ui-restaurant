@@ -1,5 +1,5 @@
 import useDocumentTitle from '@/hooks/useDocumentTitle';
-import OrderForm from '../components/OrderForm';
+import OrderForm from '../components/orders/OrderForm';
 
 
 const OrdersPage = () => {
