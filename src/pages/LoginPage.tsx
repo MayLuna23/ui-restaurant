@@ -1,9 +1,9 @@
-import { Form, Input, Typography, message, Card } from "antd";
-import CustomButton from "@/components/CustomButton";
+import { Form, Input, Typography, message, Card, Button } from "antd";
 import Logo from "@/components/AppLogo";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
+import { useState } from "react";
 
 const { Title } = Typography;
 
@@ -12,7 +12,11 @@ const LoginPage = () => {
   const [form] = Form.useForm();
   const { login } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
   const onFinish = async (values: { email: string; password: string }) => {
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     try {
       const res = await login(values.email, values.password);
@@ -26,6 +30,8 @@ const LoginPage = () => {
     } catch (err: any) {
       const msg = err?.response?.data?.message || "Error during login";
       message.error(msg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,15 +68,27 @@ const LoginPage = () => {
 
             <Form.Item
               name="password"
-              rules={[
-                { required: true, message: "Password is required" },
-              ]}
+              rules={[{ required: true, message: "Password is required" }]}
             >
               <Input.Password placeholder="Password" />
             </Form.Item>
 
-            <Form.Item style={{marginTop: "46px"}}  className="text-center">
-              <CustomButton isPrimary={true} label="Log In" />
+            <Form.Item style={{ marginTop: "46px" }} className="text-center">
+              {/* <CustomButton isPrimary={true} label="Log In" /> */}
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                style={{
+                  backgroundColor: "var(--color-orange-dark)",
+                  width: "250px",
+                  height: "50px",
+                  fontSize: "20px",
+                  color: "white",
+                }}
+              >
+                Log In
+              </Button>
             </Form.Item>
           </Form>
         </Card>
