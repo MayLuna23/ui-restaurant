@@ -1,3 +1,24 @@
+🚀 How to Run the Frontend Ocean Restaurant Locally (Vite + React)
+
+1. Clone the repository
+
+`git clone https://github.com/MayLuna23/ui-restaurant.git`
+`cd ui-restaurant`
+
+2. Install dependencies
+
+`npm install`
+
+3. Start the development server
+
+`npx vite --port 4000 `
+
+4. Access the app
+
+http://localhost:4000
+
+
+
 # 🍔 Ocean App – Restaurant Management Frontend
 
 **Ocean App** is a responsive web application built with **React** and **TypeScript** for managing restaurant operations such as product creation, order handling, and user management. This is the **frontend** of the system, connected to a secure RESTful API.
