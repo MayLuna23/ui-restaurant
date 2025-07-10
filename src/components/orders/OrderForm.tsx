@@ -1,5 +1,4 @@
 import { Form, Select, InputNumber, Button, Typography } from "antd";
-import type { SelectProps } from "antd";
 import { useEffect, useMemo, useState } from "react";
 import { CustomNotification } from "../Notification";
 import { createOrder } from "@/api/orders";
@@ -78,7 +77,7 @@ const OrderForm = () => {
     setLoading(true);
     try {
       const jwt = localStorage.getItem("jwt") || "";
-      const response = await createOrder({ items: items }, jwt);
+      await createOrder({ items: items }, jwt);
       CustomNotification({
         type: "success",
         message: "Order created successfully",
@@ -134,7 +133,7 @@ const OrderForm = () => {
                 value={items.map((item) => item.productId)}
                 maxTagCount={isMobile ? 0 : undefined}
                 showSearch
-                filterOption={(input: string, option?: React.ReactElement) =>
+                filterOption={(input: string, option?: any) =>
                   String(option?.children)
                     .toLowerCase()
                     .includes(input.toLowerCase())

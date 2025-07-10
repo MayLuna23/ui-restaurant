@@ -9,7 +9,6 @@ import {
   message,
   Select,
 } from "antd";
-import type { SelectProps } from "antd";
 import { useEffect, useState } from "react";
 import { DeleteOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -232,7 +231,7 @@ const OrderList = () => {
               placeholder="Users"
               // onChange={handleSelect}
               showSearch
-              filterOption={(input: string, option?: React.ReactElement) =>
+              filterOption={(input: string, option?: any) =>
                 String(option?.children)
                   .toLowerCase()
                   .includes(input.toLowerCase())

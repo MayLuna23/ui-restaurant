@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import SyncLoader from "react-spinners/SyncLoader";
 import Logo from "../AppLogo";
+import type { JSX } from "react";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated, loading } = useAuth();
