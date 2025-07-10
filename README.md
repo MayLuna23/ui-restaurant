@@ -17,6 +17,16 @@
 
 http://localhost:4000
 
+5. Users Credentials:
+
+   Role Admin:
+     email: admin@email.com
+     password: admin123#
+
+   Role Waiter:
+     email: mayra@email.com
+     password: mayra123#
+
 # Technologies
 
 - JavaScript/TypeScript
