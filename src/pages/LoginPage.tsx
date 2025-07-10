@@ -16,7 +16,6 @@ const LoginPage = () => {
 
   const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 5000));
 
     try {
       const res = await login(values.email, values.password);
