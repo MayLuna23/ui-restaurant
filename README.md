@@ -1,4 +1,4 @@
-🚀 How to Run the Frontend Ocean Restaurant Locally (Vite + React)
+# 🚀 How to Run the Frontend Ocean Restaurant Locally (Vite + React)
 
 1. Clone the repository
 
@@ -16,6 +16,15 @@
 4. Access the app
 
 http://localhost:4000
+
+# Technologies
+
+- JavaScript/TypeScript
+- React
+- Vite
+- Tailwind
+- Ant Design
+- React Context
 
 
 
