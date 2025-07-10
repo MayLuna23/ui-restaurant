@@ -86,7 +86,6 @@ export const filterOrdersReq = async (
   jwt: string
 ): Promise<ApiResponse> => {
   try {
-    console.log(filters)
     const response = await axios.post(`${API_URL}/orders/filter`, filters, {
       headers: {
         Authorization: `Bearer ${jwt}`,

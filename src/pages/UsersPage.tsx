@@ -17,7 +17,6 @@ const UsersPage = () => {
     try {
       const jwt = localStorage.getItem("jwt") || "";
       const res = await fetchUsersReq(jwt);
-      console.log(res);
       res.success ? setUsers(res.data?.data || []) : setUsers([]);
     } catch (err) {
       setErrorMssg("Error al obtener productos");

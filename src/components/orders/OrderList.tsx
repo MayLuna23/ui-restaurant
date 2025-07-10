@@ -177,7 +177,7 @@ const OrderList = () => {
   }, []);
 
   return (
-    <div className="">
+    <div style={{maxHeight: "100%"}}>
       {/* Filters */}
       <Form
         form={form}

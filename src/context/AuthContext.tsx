@@ -58,7 +58,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const res = await loginRequest({ email, password });
-      console.log(res.data.data)
       const { name, role, token } = res.data.data;
 
       if (token) {

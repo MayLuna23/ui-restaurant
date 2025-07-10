@@ -78,9 +78,7 @@ const OrderForm = () => {
     setLoading(true);
     try {
       const jwt = localStorage.getItem("jwt") || "";
-      console.log(items);
       const response = await createOrder({ items: items }, jwt);
-      console.log(response);
       CustomNotification({
         type: "success",
         message: "Order created successfully",
